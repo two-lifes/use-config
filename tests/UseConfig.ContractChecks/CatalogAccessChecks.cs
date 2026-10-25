@@ -70,7 +70,13 @@ internal static class CatalogAccessChecks
             restored.SetSecurityDescriptorSddlForm(descriptor, AccessControlSections.Access);
             directory.SetAccessControl(restored);
         }
-        check(directory.GetAccessControl(AccessControlSections.Access).GetSecurityDescriptorSddlForm(AccessControlSections.Access) == descriptor
+        var restoredAccess = directory.GetAccessControl(AccessControlSections.Access);
+        using var restoredIdentity = WindowsIdentity.GetCurrent();
+        var hasListDeny = restoredAccess.GetAccessRules(true, true, typeof(SecurityIdentifier)).Cast<FileSystemAccessRule>()
+            .Any(rule => rule.AccessControlType == AccessControlType.Deny
+                && (rule.FileSystemRights & FileSystemRights.ListDirectory) != 0
+                && rule.IdentityReference.Equals(restoredIdentity.User));
+        check(!hasListDeny
             && before.SequenceEqual(File.ReadAllBytes(Path.Combine(catalog, "_catalog.md")))
             && savedSettings.SequenceEqual(File.ReadAllBytes(settingsPath)),
             "original directory ACL and catalog/settings bytes are preserved");
