@@ -19,7 +19,7 @@
         <TextBlock Text="Use Config" FontSize="24" FontWeight="SemiBold" />
         <TextBlock Margin="0,12,0,0"
                    Foreground="{StaticResource SecondaryTextBrush}"
-                   Text="Choose an existing empty catalog or initialize an empty folder. Catalogs with topics or entries will be supported in a later step."
+                   Text="Choose an existing Markdown catalog or initialize an empty folder. Invalid files are preserved and reported below."
                    TextWrapping="Wrap" />
         <StackPanel x:Name="Actions" Orientation="Horizontal" Margin="0,20,0,0">
             <Button Content="Open catalog" Click="OpenCatalog" />
@@ -31,5 +31,11 @@
         <TextBlock x:Name="Status" Margin="0,12,0,0" TextWrapping="Wrap"
                    Foreground="{StaticResource SecondaryTextBrush}"
                    AutomationProperties.LiveSetting="Polite" />
+        <ScrollViewer MaxHeight="140" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
+            <ItemsControl x:Name="CatalogErrors" />
+        </ScrollViewer>
+        <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
+            <ItemsControl x:Name="CatalogRecords" />
+        </ScrollViewer>
     </StackPanel>
 </Window>

@@ -63,6 +63,10 @@ The user prohibits prolonged checks: a shared maximum of five minutes and five v
 
 ### Workflow decision
 
+### D-24 — Catalog selection dependencies and verification budget (confirmed, 2026-10-25)
+
+After verifying the incremental empty-catalog implementation, the user requested continuing 3.2 and explicitly authorized including the parser and complete validation needed from 3.4–3.5. This replaces the temporary empty-catalog-only scope; it does not authorize general file mutations or migrations. The user raised the verification command cap to ten per task, retaining the five-minute shared time cap. Historical five-command verification records remain unchanged. See the current [implementation record](technical-foundation.md#task-32-completion-and-markdown-dependencies).
+
 **D-13 — Confirmed by the user:** add the `next-task` project chat command. Each explicit invocation selects one unfinished `X.Y` item, executes it, and runs fast checks or expanded stage-completion checks when it is the final item. Then offer documentation completion marks, commit, and push. Invocation authorizes the selected work but does not confirm unresolved product choices or automatically authorize finalization. The user confirmed on 2026-10-25 that this command must be a repository skill with explicit invocation via `$next-task`, rather than a project document; plain `next-task` remains an explicit chat command. See the [next-task skill](../.agents/skills/next-task/SKILL.md). This refines D-08: creating the command remains documentation work; explicitly invoking it authorizes the selected task.
 
 **D-14 — Confirmed by the user (2026-10-25):** the explicit `next-task` invocation satisfies task 1.1. The user approved its completion mark and an initial documentation commit and push. The user also requested a single pass through all of stage 1 provided it needs no code changes. This authorizes stage 1 documentation and decision preparation together, without starting stage 2 or silently accepting P-01–P-08.

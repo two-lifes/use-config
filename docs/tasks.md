@@ -1,6 +1,6 @@
 # MVP Implementation Sequence
 
-Status: stages 1 and 2 are complete; tasks 1.1–1.8, 2.1–2.6, C1 and C2 are checked. Stage 2 provides the application skeleton, Markdown specification, isolated file/ZIP prototype, build automation and [contracts and policy](technical-foundation.md). Stage 3 has started: task 3.1 provides folder and website entry models and is complete with user-authorized marking on 2026-10-25. Task 3.2 is partially implemented for empty catalogs under the user's incremental plan; native UI selection, cancellation and reopening after restart passed on 2026-10-25. Nonempty catalog validation remains outstanding. Task 3.2 and C3 remain open; see the [partial implementation record](technical-foundation.md#task-32-partial-implementation-and-verification).
+Status: stages 1 and 2 are complete. Stage 3 tasks 3.1, 3.2, 3.4 and 3.5 are complete: models, catalog selection/persistence, Markdown parsing/serialization and validation. The user authorized the 3.4–3.5 dependencies while completing 3.2 and requested completion marks. Task 3.3 is the next unchecked numbered item; C3 remains open. See the [implementation and verification record](technical-foundation.md#task-32-completion-and-markdown-dependencies).
 
 Revision (2026-10-25, D-21): current requirements use plaintext Markdown and ZIP backups. Stage 1 checkmarks and its completion record are historical; superseded storage/protection choices below are not current requirements. Task 2.1 remains complete. No revised task or checkpoint is completed by this documentation update.
 
@@ -8,7 +8,7 @@ Sources: [product.md](product.md), [US-01–US-10](user-stories.md), [decision s
 
 ## Maintaining this plan
 
-- User-mandated verification cap: at most **5 minutes total and 5 verification command invocations per task**, including retries, builds, formatting and smoke checks. A multi-item request shares this budget. Stop at either limit without resetting or bypassing it; report unverified work and leave unsupported checkmarks open. This takes precedence over exhaustive checkpoint reviews.
+- User-mandated verification cap: at most **5 minutes total and 10 verification command invocations per task**, including retries, builds, formatting and smoke checks. A multi-item request shares this budget. Stop at either limit without resetting or bypassing it; report unverified work and leave unsupported checkmarks open. This takes precedence over exhaustive checkpoint reviews.
 
 - Invoke `$next-task` (or send `next-task` as a chat command) to execute one numbered item using the [next-task skill](../.agents/skills/next-task/SKILL.md). Completion marks, commit, and push are proposed after execution and verification; creating the workflow does not start development.
 
@@ -60,13 +60,13 @@ Stage 2 completion (2026-10-25, user-authorized): verified on Windows 10.0.26200
 Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundations of US-09, and part of US-10.
 
 - [x] 3.1. Define folder and entry models with stable IDs, folder relationships, all product fields including a separate description, and the format version specified in 2.2.
-- [ ] 3.2. Implement catalog directory selection/creation and per-user path persistence; reopen the remembered location without authentication.
+- [x] 3.2. Implement catalog directory selection/creation and per-user path persistence; reopen the remembered location without authentication.
   - [x] Implement and verify creation/opening of empty v1 catalogs and per-user path persistence (2026-10-25).
   - [x] Verify native UI selection, cancellation preserving the active catalog, and automatic reopening after restart (2026-10-25, Windows desktop).
-  - [ ] Integrate full validation and opening of catalogs containing topics/entries after 3.4–3.5; required before closing 3.2.
+  - [x] Integrate full validation and opening of catalogs containing topics/entries using the explicitly authorized 3.4–3.5 dependencies (2026-10-25).
 - [ ] 3.3. Explain that Markdown files and ZIP backups contain plaintext credentials; handle canceled selection and missing or inaccessible catalog directories without replacing data.
-- [ ] 3.4. Implement Markdown parsing and serialization according to 2.2; preserve supported Unicode and multiline field values.
-- [ ] 3.5. Validate catalog structure and files; report malformed or unsupported content without rewriting the original files or logging entry contents.
+- [x] 3.4. Implement Markdown parsing and serialization according to 2.2; preserve supported Unicode and multiline field values.
+- [x] 3.5. Validate catalog structure and files; report malformed or unsupported content without rewriting the original files or logging entry contents.
 - [ ] 3.6. Implement safe writes and external-change conflict detection; preserve the previous saved state on failures and never silently overwrite external edits.
 - [ ] 3.7. Prepare format versioning and supported migrations with a backup before changes; do not modify unsupported formats.
 - [ ] 3.8. Test directory creation/reopening, canceled selection, missing paths, Unicode, multiline fields, malformed files, unsupported versions, external edits, denied access, insufficient space, and interrupted writes.
@@ -74,6 +74,8 @@ Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundat
 - [ ] **Checkpoint C3:** US-01 and the storage foundations of US-09 are verified; saved state survives restarts and tested write failures, and invalid files are preserved.
 
 Task 3.1 verification (2026-10-25, Windows x64): the Debug solution build passed with zero warnings/errors, and all 20 contract checks passed, including nine model checks. Solution and contract-project formatting checks passed outside the sandbox after sandbox MSBuild pipe access failures. See the [model verification record](technical-foundation.md#task-31-models-and-verification). Production storage, tasks 3.2–3.8 and C3 remain open.
+
+Task 3.2 and dependencies verification (2026-10-25, Windows x64): Debug build, 106 checks, solution/test formatting and UI reopening of a populated catalog passed. Canceling the picker retained the loaded records. Ten verification calls took approximately 93 seconds; initial formatting findings were corrected. Safe catalog mutations, migrations and the broader failure matrix remain 3.6–3.8. Historical evidence above describes the state at task 3.1, not current completion. C3 remains open.
 
 ## 4. Build the UI foundation
 

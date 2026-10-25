@@ -29,7 +29,7 @@ One invocation handles one numbered `X.Y` item from [tasks.md](../../../docs/tas
 
 ## 3. Verify the result
 
-User-mandated hard budget: at most **5 minutes total and 5 verification command invocations per task**, including builds, formatting, tests, smoke checks and retries. A multi-item request shares one budget. Do not reset it between items or evade it by splitting or wrapping commands. Stop verification immediately at either limit; report omitted checks and leave unverified completion open. This overrides the expanded verification requirements below.
+User-mandated hard budget: at most **5 minutes total and 10 verification command invocations per task**, including builds, formatting, tests, smoke checks and retries. A multi-item request shares one budget. Do not reset it between items or evade it by splitting or wrapping commands. Stop verification immediately at either limit; report omitted checks and leave unverified completion open. This overrides the expanded verification requirements below.
 
 Use the repository's actual configured commands and available environment. Do not invent successful results or install tools solely for documentation checks.
 

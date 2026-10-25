@@ -8,7 +8,7 @@ namespace UseConfig.App;
 public partial class MainWindow : Window
 {
     private readonly CatalogSession session = new(
-        new EmptyCatalogLocation(CatalogSettings.DefaultDirectory), new CatalogSettings(CatalogSettings.DefaultDirectory));
+        new MarkdownCatalogLocation(CatalogSettings.DefaultDirectory), new CatalogSettings(CatalogSettings.DefaultDirectory));
 
     public MainWindow()
     {
@@ -22,8 +22,8 @@ public partial class MainWindow : Window
     private async void CreateCatalog(object sender, RoutedEventArgs e) => await SelectAsync(true);
     private async void RetryCatalog(object sender, RoutedEventArgs e)
     {
-        if (session.RememberedPath is { } path)
-            await RunAsync(() => session.OpenAsync(path, false, false, CancellationToken.None));
+        if ((session.CurrentPath ?? session.RememberedPath) is { } path)
+            await RunAsync(() => session.OpenAsync(path, false, true, CancellationToken.None));
         else
             await RunAsync(() => session.RestoreAsync(CancellationToken.None));
     }
@@ -55,9 +55,14 @@ public partial class MainWindow : Window
         {
             var result = await operation();
             CatalogPath.Text = session.CurrentPath ?? session.RememberedPath ?? "No catalog selected.";
+            CatalogRecords.ItemsSource = session.Current?.Folders.Select(folder => $"Folder: {folder.Name}")
+                .Concat(session.Current.Entries.Select(entry => $"Website: {entry.Name}"));
+            CatalogErrors.ItemsSource = session.Current?.Diagnostics.Select(diagnostic =>
+                $"{diagnostic.Code}: {diagnostic.RelativePath ?? "catalog"}{(diagnostic.Field is null ? "" : " (" + diagnostic.Field + ")")}");
             Status.Text = result is OperationResult<Completion>.Failure failure ? Describe(failure.Code)
+                : session.Current?.IsReadOnly == true ? "Catalog is read-only. Repair the listed files and retry. This selection was not saved."
                 : session.PersistenceError is not null ? "Catalog is open, but its path could not be remembered. Choose it again to retry saving."
-                : session.CurrentPath is not null ? "Empty catalog is open."
+                : session.Current is { } current ? $"Catalog is open. {current.Folders.Count} folders, {current.Entries.Count} websites."
                 : "Select an existing catalog or create one in an empty folder.";
             RetryButton.IsEnabled = true;
         }
@@ -69,7 +74,6 @@ public partial class MainWindow : Window
 
     private static string Describe(ErrorCode code) => code switch
     {
-        ErrorCode.CatalogContentsNotYetSupported => "Catalogs with topics or other files cannot be opened yet. Choose an empty catalog.",
         ErrorCode.NotFound => "The catalog directory is missing. Retry or choose another location.",
         ErrorCode.AccessDenied => "Access was denied. Check permissions and retry, or choose another location.",
         ErrorCode.AlreadyExists => "The selected folder is not empty. No existing files were replaced.",

@@ -1,6 +1,6 @@
 # Markdown Catalog Format v1
 
-Status: specified in task 2.2 under D-21 and D-22. This is a storage contract, not an implemented parser or verified round trip. Task 2.3 will verify feasibility on Windows; stage 3 implements storage. Requirements: [product.md](product.md), [user stories](user-stories.md), and [decisions.md](decisions.md).
+Status: specified in task 2.2 under D-21 and D-22. The isolated task 2.3 prototype verified feasibility; tasks 3.2, 3.4 and 3.5 now implement opening, parsing/serialization and validation with recorded Windows checks. Safe catalog mutations and migrations remain future tasks. See [implementation evidence](technical-foundation.md#task-32-completion-and-markdown-dependencies). Requirements: [product.md](product.md), [user stories](user-stories.md), and [decisions.md](decisions.md).
 
 ## 1. Catalog layout and identity
 

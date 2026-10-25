@@ -8,7 +8,7 @@ Package restoration uses the public NuGet feed at `https://api.nuget.org/v3/inde
 
 ## Mandatory verification budget
 
-The user prohibits prolonged verification. The entire task has a shared maximum of **5 minutes and 5 verification command invocations**, including builds, formatting, tests, smoke checks and retries. Stop at whichever limit comes first; do not reset the budget between items or evade it by splitting/wrapping commands. Use a time-bounded runner and terminate its child processes when the remaining time expires. Report omitted checks rather than claiming success. This overrides exhaustive stage-review requirements.
+The user prohibits prolonged verification. The entire task has a shared maximum of **5 minutes and 10 verification command invocations**, including builds, formatting, tests, smoke checks and retries. Stop at whichever limit comes first; do not reset the budget between items or evade it by splitting/wrapping commands. Use a time-bounded runner and terminate its child processes when the remaining time expires. Report omitted checks rather than claiming success. This overrides exhaustive stage-review requirements.
 
 ## One verification command
 
@@ -26,7 +26,7 @@ The script stops at the first failed command and returns a nonzero exit code. In
 2. Restores the application solution and the separate storage probe; the probe uses `--locked-mode`.
 3. Restores the dependency-free contract checks and builds all three targets in Debug and Release with `--no-restore`.
 4. Runs `dotnet format --verify-no-changes --no-restore` on all three targets without rewriting sources.
-5. Runs the storage probe and contract-check executables in Debug and Release. Any nonzero exit code fails verification. Contract checks include in-memory doubles and synthetic empty-catalog/settings adapter scenarios; see [technical-foundation.md](technical-foundation.md).
+5. Runs the storage probe and contract-check executables in Debug and Release. Any nonzero exit code fails verification. Contract checks include in-memory doubles, synthetic catalog/settings adapter scenarios, production codec round trips and catalog validation; see [technical-foundation.md](technical-foundation.md).
 
 The probe remains outside [UseConfig.slnx](../UseConfig.slnx). Its executable assertions are the existing automated scenario suite; there is no separate `dotnet test` project. See [the prototype report](storage-prototype.md) for scenarios, synthetic fixtures retained under ignored `bin/`, and known limitations. Do not supply real catalog data to verification.
 

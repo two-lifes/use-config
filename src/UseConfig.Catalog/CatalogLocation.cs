@@ -2,7 +2,7 @@ namespace UseConfig.Catalog;
 
 public interface ICatalogLocation
 {
-    Task<OperationResult<string>> OpenAsync(string path, bool create, CancellationToken cancellationToken);
+    Task<OperationResult<OpenedCatalog>> OpenAsync(string path, bool create, CancellationToken cancellationToken);
 }
 
 public interface ICatalogSettings
@@ -13,7 +13,8 @@ public interface ICatalogSettings
 
 public sealed class CatalogSession(ICatalogLocation location, ICatalogSettings settings)
 {
-    public string? CurrentPath { get; private set; }
+    public OpenedCatalog? Current { get; private set; }
+    public string? CurrentPath => Current?.RootPath;
     public string? RememberedPath { get; private set; }
     public ErrorCode? PersistenceError { get; private set; }
 
@@ -31,14 +32,14 @@ public sealed class CatalogSession(ICatalogLocation location, ICatalogSettings s
         string path, bool create, bool remember, CancellationToken cancellationToken)
     {
         var opened = await location.OpenAsync(path, create, cancellationToken);
-        if (opened is OperationResult<string>.Failure failure)
+        if (opened is OperationResult<OpenedCatalog>.Failure failure)
             return new OperationResult<Completion>.Failure(failure.Code);
-        CurrentPath = ((OperationResult<string>.Success)opened).Value;
+        Current = ((OperationResult<OpenedCatalog>.Success)opened).Value;
         PersistenceError = null;
-        if (remember)
+        if (remember && !Current.IsReadOnly)
         {
             // Opening/creation has committed. Persistence must report its actual outcome.
-            var saved = await settings.RememberAsync(CurrentPath, CancellationToken.None);
+            var saved = await settings.RememberAsync(Current.RootPath, CancellationToken.None);
             if (saved is OperationResult<Completion>.Failure saveFailure)
                 PersistenceError = saveFailure.Code;
             else

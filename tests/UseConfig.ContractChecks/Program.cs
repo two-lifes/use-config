@@ -97,7 +97,9 @@ try
     Check(!new CatalogDocument("synthetic.md", "synthetic-secret").ToString()!.Contains("synthetic-secret"),
         "document default string representation omits contents");
     await LocationChecks.RunAsync(Check);
-    Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Includes empty-catalog and settings adapters.");
+    MarkdownCodecChecks.Run((name, action) => { action(); Check(true, name); });
+    await CatalogLoadingChecks.RunAsync(Check);
+    Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Includes Markdown catalog and settings adapters.");
     return 0;
 }
 catch (Exception exception)
