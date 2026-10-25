@@ -99,6 +99,7 @@ try
     await LocationChecks.RunAsync(Check);
     MarkdownCodecChecks.Run((name, action) => { action(); Check(true, name); });
     await CatalogLoadingChecks.RunAsync(Check);
+    await CatalogAccessChecks.RunAsync(Check);
     Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Includes Markdown catalog and settings adapters.");
     return 0;
 }

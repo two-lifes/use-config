@@ -21,6 +21,10 @@
                    Foreground="{StaticResource SecondaryTextBrush}"
                    Text="Choose an existing Markdown catalog or initialize an empty folder. Invalid files are preserved and reported below."
                    TextWrapping="Wrap" />
+        <TextBlock Margin="0,12,0,0"
+                   Foreground="{StaticResource SecondaryTextBrush}"
+                   Text="Markdown files and ZIP backups contain plaintext usernames and passwords. Masking passwords in the app does not encrypt these files."
+                   TextWrapping="Wrap" />
         <StackPanel x:Name="Actions" Orientation="Horizontal" Margin="0,20,0,0">
             <Button Content="Open catalog" Click="OpenCatalog" />
             <Button Content="Create catalog" Click="CreateCatalog" />
