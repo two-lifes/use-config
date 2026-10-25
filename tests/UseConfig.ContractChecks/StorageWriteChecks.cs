@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Runtime.Versioning;
 using UseConfig.Catalog;
 using UseConfig.Storage;
 
@@ -27,6 +28,7 @@ internal static class StorageWriteChecks
     private static bool Failed<T>(OperationResult<T> result, ErrorCode code) => result is OperationResult<T>.Failure failure && failure.Code == code;
     private static FileChange Replace(string text = Metadata) => new FileChange.ReplaceDocument(new CatalogDocument("_catalog.md", text));
 
+    [SupportedOSPlatform("windows")]
     internal static async Task RunAsync(Action<bool, string> check)
     {
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Windows file-operation checks require Windows.");

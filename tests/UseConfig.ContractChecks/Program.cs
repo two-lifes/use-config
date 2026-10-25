@@ -105,7 +105,8 @@ try
     MarkdownCodecChecks.Run((name, action) => { action(); Check(true, name); });
     await CatalogLoadingChecks.RunAsync(Check);
     await CatalogAccessChecks.RunAsync(Check);
-    await StorageWriteChecks.RunAsync(Check);
+    if (OperatingSystem.IsWindows()) await StorageWriteChecks.RunAsync(Check);
+    else throw new PlatformNotSupportedException("Windows file-operation checks require Windows.");
     Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Includes Markdown catalog and settings adapters.");
     return 0;
 }
