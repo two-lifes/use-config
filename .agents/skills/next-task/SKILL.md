@@ -1,13 +1,18 @@
+---
+name: next-task
+description: Execute and verify one next unfinished project task when explicitly invoked as $next-task or next-task. Do not activate for discussions or edits of the command.
+---
+
 # next-task
 
-A project chat command. Send `next-task` to the agent working in this repository. The root [AGENTS.md](../AGENTS.md) routes the request to this workflow; this is not a shell executable or a registered application slash command.
+Run this repository skill when the user explicitly invokes `$next-task` or sends `next-task` as a command. Creating, editing, or discussing the command does not invoke it. Follow the root [AGENTS.md](../../../AGENTS.md). Resolve repository paths from the repository root; Markdown links below are relative to this skill.
 
-One invocation handles one numbered `X.Y` item from [tasks.md](tasks.md), followed by verification and a proposal to record completion, commit, and push. Creating or editing this workflow does not execute it.
+One invocation handles one numbered `X.Y` item from [tasks.md](../../../docs/tasks.md), followed by verification and a proposal to record completion, commit, and push. Creating or editing this workflow does not execute it.
 
 ## 1. Locate the next item
 
-1. Read `AGENTS.md`, `tasks.md`, the relevant requirements, and [decisions.md](decisions.md). Inspect Git status and preserve existing user changes.
-2. Use `[x]` completion marks in `tasks.md` as the progress record. Select the first unchecked numbered `X.Y` item in document order. Checkpoint rows are not numbered tasks. Do not select the numerically largest completed item and skip earlier gaps.
+1. Read `AGENTS.md`, `docs/tasks.md`, the relevant requirements, and [decisions.md](../../../docs/decisions.md). Inspect Git status and preserve existing user changes.
+2. Use `[x]` completion marks in `docs/tasks.md` as the progress record. Select the first unchecked numbered `X.Y` item in document order. Checkpoint rows are not numbered tasks. Do not select the numerically largest completed item and skip earlier gaps.
 3. Report the last completed item before the selected item, or that none has been completed, and the selected task ID and title.
 4. Inspect existing work for the selected item. If its implementation is already present but its completion mark is pending, verify it and propose recording completion instead of implementing it again or skipping ahead. Do not infer completion from a commit message alone.
 5. Check dependencies and prerequisite decisions. If a prerequisite checkpoint is open, establish whether its evidence exists; if so, propose closing it before advancing. If evidence or a material decision is missing, explain the blocker and request the missing information. Do not silently choose an unapproved product decision or bypass the item.
@@ -19,7 +24,7 @@ One invocation handles one numbered `X.Y` item from [tasks.md](tasks.md), follow
 - For item 1.1, the invocation itself supplies the requested implementation instruction; report that result and propose its completion mark. Do not also implement 1.2.
 - For items requiring a user's decision, use an existing explicit answer if available; otherwise ask for the missing decision. A command invocation does not confirm every proposal in the plan.
 - Complete all work necessary for the selected item within its scope. Fix defects introduced by the change. Avoid unrelated refactoring or changing other tasks.
-- Keep application-owned text and project documentation in English. Follow [design.md](design.md) for UI changes.
+- Keep application-owned text and project documentation in English. Follow [design.md](../../../docs/design.md) for UI changes.
 - Determine whether this is the stage's last numbered item from the actual document structure, not from a fixed task count. For example, stage 8 currently ends at 8.7.
 
 ## 3. Verify the result

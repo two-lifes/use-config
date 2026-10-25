@@ -8,7 +8,7 @@ Sources: [product.md](product.md), [US-01–US-10](user-stories.md), [decision s
 
 ## Maintaining this plan
 
-- Invoke `next-task` in chat to execute one numbered item using the [command workflow](next-task.md). Completion marks, commit, and push are proposed after execution and verification; creating the workflow does not start development.
+- Invoke `$next-task` (or send `next-task` as a chat command) to execute one numbered item using the [next-task skill](../.agents/skills/next-task/SKILL.md). Completion marks, commit, and push are proposed after execution and verification; creating the workflow does not start development.
 
 - Follow the sequence: decisions → foundation → file storage → catalog → browser and search → backups → release. Verify UI and data integrity as features become available.
 - Mark `[x]` only after completion and verification. Close checkpoints based on the stated outcome, not merely the existence of files.
