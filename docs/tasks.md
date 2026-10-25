@@ -1,6 +1,6 @@
 # MVP Implementation Sequence
 
-Status: stages 1 and 2 are complete; tasks 1.1–1.8, 2.1–2.6, C1 and C2 are checked. Stage 2 provides the application skeleton, Markdown specification, isolated file/ZIP prototype, build automation and [contracts and policy](technical-foundation.md). Stage 3 has started: task 3.1 provides folder and website entry models and is complete with user-authorized marking on 2026-10-25. Task 3.2 is next and requires a separate instruction or `next-task` invocation; C3 remains open.
+Status: stages 1 and 2 are complete; tasks 1.1–1.8, 2.1–2.6, C1 and C2 are checked. Stage 2 provides the application skeleton, Markdown specification, isolated file/ZIP prototype, build automation and [contracts and policy](technical-foundation.md). Stage 3 has started: task 3.1 provides folder and website entry models and is complete with user-authorized marking on 2026-10-25. Task 3.2 is partially implemented for empty catalogs under the user's incremental plan; native UI selection, cancellation and reopening after restart passed on 2026-10-25. Nonempty catalog validation remains outstanding. Task 3.2 and C3 remain open; see the [partial implementation record](technical-foundation.md#task-32-partial-implementation-and-verification).
 
 Revision (2026-10-25, D-21): current requirements use plaintext Markdown and ZIP backups. Stage 1 checkmarks and its completion record are historical; superseded storage/protection choices below are not current requirements. Task 2.1 remains complete. No revised task or checkpoint is completed by this documentation update.
 
@@ -61,6 +61,9 @@ Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundat
 
 - [x] 3.1. Define folder and entry models with stable IDs, folder relationships, all product fields including a separate description, and the format version specified in 2.2.
 - [ ] 3.2. Implement catalog directory selection/creation and per-user path persistence; reopen the remembered location without authentication.
+  - [x] Implement and verify creation/opening of empty v1 catalogs and per-user path persistence (2026-10-25).
+  - [x] Verify native UI selection, cancellation preserving the active catalog, and automatic reopening after restart (2026-10-25, Windows desktop).
+  - [ ] Integrate full validation and opening of catalogs containing topics/entries after 3.4–3.5; required before closing 3.2.
 - [ ] 3.3. Explain that Markdown files and ZIP backups contain plaintext credentials; handle canceled selection and missing or inaccessible catalog directories without replacing data.
 - [ ] 3.4. Implement Markdown parsing and serialization according to 2.2; preserve supported Unicode and multiline field values.
 - [ ] 3.5. Validate catalog structure and files; report malformed or unsupported content without rewriting the original files or logging entry contents.

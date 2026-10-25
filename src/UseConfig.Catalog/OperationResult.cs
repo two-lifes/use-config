@@ -4,7 +4,7 @@ public enum ErrorCode
 {
     InvalidInput, UnsupportedFormat, MalformedContent, NotFound, AccessDenied,
     Conflict, ReadOnly, AlreadyExists, InsufficientSpace, IoFailure,
-    UnsafeArchive, ClipboardUnavailable, LaunchFailed
+    UnsafeArchive, ClipboardUnavailable, LaunchFailed, CatalogContentsNotYetSupported
 }
 
 // Locations are for UI diagnostics only, never for technical logging.

@@ -96,7 +96,8 @@ try
     }
     Check(!new CatalogDocument("synthetic.md", "synthetic-secret").ToString()!.Contains("synthetic-secret"),
         "document default string representation omits contents");
-    Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Test doubles only; no adapter verification.");
+    await LocationChecks.RunAsync(Check);
+    Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Includes empty-catalog and settings adapters.");
     return 0;
 }
 catch (Exception exception)

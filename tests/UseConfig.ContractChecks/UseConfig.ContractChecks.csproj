@@ -7,5 +7,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/UseConfig.Catalog/UseConfig.Catalog.csproj" />
+    <ProjectReference Include="../../src/UseConfig.Storage/UseConfig.Storage.csproj" />
   </ItemGroup>
 </Project>

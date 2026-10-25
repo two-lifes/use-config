@@ -26,7 +26,7 @@ The script stops at the first failed command and returns a nonzero exit code. In
 2. Restores the application solution and the separate storage probe; the probe uses `--locked-mode`.
 3. Restores the dependency-free contract checks and builds all three targets in Debug and Release with `--no-restore`.
 4. Runs `dotnet format --verify-no-changes --no-restore` on all three targets without rewriting sources.
-5. Runs the storage probe and contract-check executables in Debug and Release. Any nonzero exit code fails verification. Contract checks use in-memory doubles, not real adapters; see [technical-foundation.md](technical-foundation.md).
+5. Runs the storage probe and contract-check executables in Debug and Release. Any nonzero exit code fails verification. Contract checks include in-memory doubles and synthetic empty-catalog/settings adapter scenarios; see [technical-foundation.md](technical-foundation.md).
 
 The probe remains outside [UseConfig.slnx](../UseConfig.slnx). Its executable assertions are the existing automated scenario suite; there is no separate `dotnet test` project. See [the prototype report](storage-prototype.md) for scenarios, synthetic fixtures retained under ignored `bin/`, and known limitations. Do not supply real catalog data to verification.
 
