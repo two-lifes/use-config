@@ -1,6 +1,6 @@
 # Windows Markdown Storage Feasibility Probe
 
-Status: task 2.3 experiments implemented and verified on the Windows environment below. The initial replacement algorithm was rejected; a guarded, recoverable in-place write now passes the required concurrency scenarios. **Task 2.3 is complete with user-authorized finalization; C2 remains open.** No production storage, UI integration, migration, or release compatibility is claimed.
+Status: task 2.3 experiments implemented and verified on the Windows environment below. The initial replacement algorithm was rejected; a guarded, recoverable in-place write now passes the required concurrency scenarios. **Task 2.3 is complete with user-authorized finalization; C2 was open at that time and is now closed by the [stage 2 review](technical-foundation.md#authorized-retry-results-2026-10-25).** No production storage, UI integration, migration, or release compatibility is claimed.
 
 Requirements: [Markdown format v1](markdown-format.md), [product requirements](product.md), and [task sequence](tasks.md). Source: [UseConfig.StorageProbe](../prototypes/UseConfig.StorageProbe/UseConfig.StorageProbe.csproj). The probe is deliberately outside the application solution and has no references to its four projects.
 

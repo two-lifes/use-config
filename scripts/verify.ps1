@@ -43,21 +43,25 @@ try {
 
     $solution = 'UseConfig.slnx'
     $probe = 'prototypes/UseConfig.StorageProbe/UseConfig.StorageProbe.csproj'
+    $contracts = 'tests/UseConfig.ContractChecks/UseConfig.ContractChecks.csproj'
     $source = 'https://api.nuget.org/v3/index.json'
     Invoke-Checked $dotnetPath @('restore', $solution, '--source', $source)
     Invoke-Checked $dotnetPath @('restore', $probe, '--source', $source, '--locked-mode')
+    Invoke-Checked $dotnetPath @('restore', $contracts, '--source', $source)
 
     foreach ($configuration in @('Debug', 'Release')) {
-        foreach ($target in @($solution, $probe)) {
+        foreach ($target in @($solution, $probe, $contracts)) {
             Invoke-Checked $dotnetPath @('build', $target, '--no-restore', '-c', $configuration)
         }
     }
-    foreach ($target in @($solution, $probe)) {
+    foreach ($target in @($solution, $probe, $contracts)) {
         Invoke-Checked $dotnetPath @('format', $target, '--verify-no-changes', '--no-restore')
     }
     foreach ($configuration in @('Debug', 'Release')) {
         $probeExecutable = Join-Path $repoRoot "prototypes/UseConfig.StorageProbe/bin/$configuration/net10.0/UseConfig.StorageProbe.exe"
         Invoke-Checked $probeExecutable @()
+        $contractExecutable = Join-Path $repoRoot "tests/UseConfig.ContractChecks/bin/$configuration/net10.0/UseConfig.ContractChecks.exe"
+        Invoke-Checked $contractExecutable @()
     }
     Write-Host 'All verification checks passed.'
 }

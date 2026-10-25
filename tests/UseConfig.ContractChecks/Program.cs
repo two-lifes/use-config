@@ -1,0 +1,142 @@
+using UseConfig.Catalog;
+
+int passed = 0;
+void Check(bool condition, string name)
+{
+    if (!condition) throw new InvalidOperationException(name);
+    passed++;
+    Console.WriteLine($"PASS: {name}");
+}
+
+try
+{
+    var clock = new ManualDelay();
+    IDelayScheduler scheduler = clock;
+    var reveal = scheduler.DelayAsync(CredentialTiming.RevealDuration, CancellationToken.None);
+    clock.Advance(TimeSpan.FromSeconds(29));
+    Check(!reveal.IsCompleted, "reveal remains pending before deadline");
+    clock.Advance(TimeSpan.FromSeconds(1));
+    await reveal;
+    Check(reveal.IsCompletedSuccessfully, "reveal expires at 30 seconds");
+
+    using var previousCopy = new CancellationTokenSource();
+    var oldExpiry = scheduler.DelayAsync(CredentialTiming.ClipboardDuration, previousCopy.Token);
+    previousCopy.Cancel();
+    var newExpiry = scheduler.DelayAsync(CredentialTiming.ClipboardDuration, CancellationToken.None);
+    clock.Advance(TimeSpan.FromSeconds(59));
+    Check(oldExpiry.IsCanceled && !newExpiry.IsCompleted, "repeated copy can cancel old expiry independently");
+    clock.Advance(TimeSpan.FromSeconds(1));
+    await newExpiry;
+    Check(newExpiry.IsCompletedSuccessfully, "clipboard expiry is 60 seconds");
+
+    IClipboardAccess clipboard = new MemoryClipboard();
+    var first = (OperationResult<ClipboardOwnership>.Success)await clipboard.CopyAsync("synthetic", CancellationToken.None);
+    var second = (OperationResult<ClipboardOwnership>.Success)await clipboard.CopyAsync("synthetic", CancellationToken.None);
+    Check(await clipboard.ClearIfOwnedAsync(first.Value, CancellationToken.None)
+        is OperationResult<ClipboardCleanup>.Success { Value: ClipboardCleanup.OwnershipLost },
+        "same text with new ownership is preserved");
+    Check(await clipboard.ClearIfOwnedAsync(second.Value, CancellationToken.None)
+        is OperationResult<ClipboardCleanup>.Success { Value: ClipboardCleanup.Cleared }, "current ownership can clear");
+
+    var files = new MemoryFiles();
+    ICatalogFiles storage = files;
+    var loaded = (OperationResult<CatalogSnapshot>.Success)await storage.ReadAsync("synthetic", CancellationToken.None);
+    files.Revision = new CatalogRevision();
+    Check(await storage.ApplyAsync("synthetic", loaded.Value.Revision, [], CancellationToken.None)
+        is OperationResult<CatalogSnapshot>.Failure { Code: ErrorCode.Conflict }, "stale revision reports conflict");
+    files.Diagnostics = [new Diagnostic(ErrorCode.MalformedContent, "topic/site.md", "name")];
+    var invalid = (OperationResult<CatalogSnapshot>.Success)await storage.ReadAsync("synthetic", CancellationToken.None);
+    Check(invalid.Value.IsReadOnly, "diagnostics force read-only snapshot");
+    Check(await storage.ApplyAsync("synthetic", invalid.Value.Revision, [], CancellationToken.None)
+        is OperationResult<CatalogSnapshot>.Failure { Code: ErrorCode.ReadOnly }, "read-only mutation reports failure");
+    using var canceled = new CancellationTokenSource();
+    canceled.Cancel();
+    try
+    {
+        await storage.ReadAsync("synthetic", canceled.Token);
+        throw new InvalidOperationException("Cancellation was ignored");
+    }
+    catch (OperationCanceledException exception) when (exception.CancellationToken == canceled.Token)
+    {
+        Check(true, "cancellation remains distinguishable from storage errors");
+    }
+    Check(!new CatalogDocument("synthetic.md", "synthetic-secret").ToString()!.Contains("synthetic-secret"),
+        "document default string representation omits contents");
+    Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Test doubles only; no adapter verification.");
+    return 0;
+}
+catch (Exception exception)
+{
+    Console.Error.WriteLine($"Contract checks failed: {exception.GetType().Name}; {passed} passed.");
+    return 1;
+}
+
+sealed class ManualDelay : IDelayScheduler
+{
+    private TimeSpan now;
+    private readonly List<(TimeSpan Due, TaskCompletionSource Source)> pending = [];
+
+    public Task DelayAsync(TimeSpan delay, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var source = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var registration = cancellationToken.Register(() => source.TrySetCanceled(cancellationToken));
+        _ = source.Task.ContinueWith(_ => registration.Dispose(), TaskScheduler.Default);
+        pending.Add((now + delay, source));
+        return source.Task;
+    }
+
+    public void Advance(TimeSpan elapsed)
+    {
+        now += elapsed;
+        foreach (var item in pending.Where(item => item.Due <= now).ToArray())
+        {
+            item.Source.TrySetResult();
+            pending.Remove(item);
+        }
+    }
+}
+
+sealed class MemoryClipboard : IClipboardAccess
+{
+    private ClipboardOwnership? current;
+
+    public Task<OperationResult<ClipboardOwnership>> CopyAsync(string text, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        current = new ClipboardOwnership();
+        return Task.FromResult<OperationResult<ClipboardOwnership>>(new OperationResult<ClipboardOwnership>.Success(current));
+    }
+
+    public Task<OperationResult<ClipboardCleanup>> ClearIfOwnedAsync(ClipboardOwnership ownership, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var result = ReferenceEquals(current, ownership) ? ClipboardCleanup.Cleared : ClipboardCleanup.OwnershipLost;
+        if (result == ClipboardCleanup.Cleared) current = null;
+        return Task.FromResult<OperationResult<ClipboardCleanup>>(new OperationResult<ClipboardCleanup>.Success(result));
+    }
+}
+
+sealed class MemoryFiles : ICatalogFiles
+{
+    public CatalogRevision Revision { get; set; } = new();
+    public IReadOnlyList<Diagnostic> Diagnostics { get; set; } = [];
+
+    public Task<OperationResult<CatalogSnapshot>> ReadAsync(string rootPath, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult<OperationResult<CatalogSnapshot>>(
+            new OperationResult<CatalogSnapshot>.Success(new CatalogSnapshot(Revision, [], Diagnostics)));
+    }
+
+    public Task<OperationResult<CatalogSnapshot>> ApplyAsync(string rootPath, CatalogRevision expectedRevision,
+        IReadOnlyList<FileChange> changes, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (Diagnostics.Count != 0)
+            return Task.FromResult<OperationResult<CatalogSnapshot>>(new OperationResult<CatalogSnapshot>.Failure(ErrorCode.ReadOnly));
+        if (!ReferenceEquals(Revision, expectedRevision))
+            return Task.FromResult<OperationResult<CatalogSnapshot>>(new OperationResult<CatalogSnapshot>.Failure(ErrorCode.Conflict));
+        return ReadAsync(rootPath, cancellationToken);
+    }
+}

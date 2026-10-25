@@ -1,12 +1,14 @@
 # MVP Implementation Sequence
 
-Status: stage 1 is complete; tasks 1.1–1.8 and C1 are checked. Stage 2 has started: task 2.1 is complete, with a four-project application skeleton and a minimal WPF window verified on Windows. C2 remains open. Further tasks require a separate instruction or `next-task` invocation.
+Status: stages 1 and 2 are complete; tasks 1.1–1.8, 2.1–2.6, C1 and C2 are checked. Stage 2 provides the application skeleton, Markdown specification, isolated file/ZIP prototype, build automation and [contracts and policy](technical-foundation.md). The user authorized stage 2 completion marks on 2026-10-25. Stage 3 has not started; task 3.1 requires a separate instruction or `next-task` invocation.
 
 Revision (2026-10-25, D-21): current requirements use plaintext Markdown and ZIP backups. Stage 1 checkmarks and its completion record are historical; superseded storage/protection choices below are not current requirements. Task 2.1 remains complete. No revised task or checkpoint is completed by this documentation update.
 
 Sources: [product.md](product.md), [US-01–US-10](user-stories.md), [decision statuses D/P](decisions.md), and [design.md](design.md). Stage 1 choices were confirmed in D-15–D-20 and revised by D-21; checked planning items do not imply implemented features or verified Windows compatibility.
 
 ## Maintaining this plan
+
+- User-mandated verification cap: at most **5 minutes total and 5 verification command invocations per task**, including retries, builds, formatting and smoke checks. A multi-item request shares this budget. Stop at either limit without resetting or bypassing it; report unverified work and leave unsupported checkmarks open. This takes precedence over exhaustive checkpoint reviews.
 
 - Invoke `$next-task` (or send `next-task` as a chat command) to execute one numbered item using the [next-task skill](../.agents/skills/next-task/SKILL.md). Completion marks, commit, and push are proposed after execution and verification; creating the workflow does not start development.
 
@@ -44,12 +46,14 @@ Dependency: C1 (historical planning complete) and the approved D-21 revision. Ta
 - [x] 2.2. Specify the Markdown catalog format: fields, stable identifiers, filenames, single-level topic directories, format version, manual editing rules, and malformed-file handling. Define syntax here before implementation.
 - [x] 2.3. Use a small technical prototype to verify Markdown read/write round trips, Unicode and multiline fields, external-change detection, safe file replacement, and ZIP round trips on Windows; review licenses of any required dependencies.
 - [x] 2.4. Pin dependency versions and document build/test commands on Windows; arrange automated execution of these checks.
-- [ ] 2.5. Define interfaces for URL launching, clipboard access, reveal/clipboard timing, and catalog/file operations so they can be tested independently of the UI.
-- [ ] 2.6. Define storage of the user-selected catalog path, technical log location, and error handling without entry contents or secrets. Do not add telemetry.
+- [x] 2.5. Define interfaces for URL launching, clipboard access, reveal/clipboard timing, and catalog/file operations so they can be tested independently of the UI.
+- [x] 2.6. Define storage of the user-selected catalog path, technical log location, and error handling without entry contents or secrets. Do not add telemetry.
 
-Task 2.1 verification (2026-10-25, Windows build 26200 x64, .NET SDK 10.0.402 / runtime 10.0.13): restore, Debug and Release builds (zero warnings/errors), and `dotnet format --verify-no-changes --no-restore` passed. Project references match the intended acyclic layer structure. The Release window opened with the expected English text and closed normally with exit code 0. Git excludes build artifacts. No business logic or automated test suite exists yet; the SQLCipher integration planned at that time was unverified and has since been superseded by D-21. Markdown storage and compatibility across all target Windows versions remain unverified. C2 is not complete.
+Task 2.1 verification (2026-10-25, Windows build 26200 x64, .NET SDK 10.0.402 / runtime 10.0.13): restore, Debug and Release builds (zero warnings/errors), and `dotnet format --verify-no-changes --no-restore` passed. Project references match the intended acyclic layer structure. The Release window opened with the expected English text and closed normally with exit code 0. Git excludes build artifacts. No business logic or automated test suite exists yet; the SQLCipher integration planned at that time was unverified and has since been superseded by D-21. Markdown storage and compatibility across all target Windows versions remain unverified. C2 was not complete at the time of the task 2.1 verification.
 
-- [ ] **Checkpoint C2:** a minimal application builds and runs on Windows; the Markdown format and file/ZIP prototype are verified, and dependencies and layers are defined.
+- [x] **Checkpoint C2:** a minimal application builds and runs on Windows; the Markdown format and file/ZIP prototype are verified, and dependencies and layers are defined.
+
+Stage 2 completion (2026-10-25, user-authorized): verified on Windows 10.0.26200.0 x64 / NTFS with SDK 10.0.402 and runtime 10.0.13. Debug/Release builds and formatting passed; each configuration passed 96 storage-probe scenarios and 11 contract checks. WPF startup and normal shutdown passed; local file links and diff whitespace were checked. The retry used five command invocations within five minutes. See [technical-foundation.md](technical-foundation.md#authorized-retry-results-2026-10-25). Production adapters, minimum supported Windows versions and remote CI remain unverified; C2 does not certify later-stage behavior.
 
 ## 3. Implement Markdown storage
 

@@ -1,6 +1,6 @@
 # MVP: Local Website and Credentials Catalog for Windows
 
-Status: approved MVP requirements revised for plaintext Markdown storage (D-21). Stage 1 records historical planning completion; task 2.1 provides the application skeleton. Markdown storage is not implemented. Further implementation requires a separate instruction or `next-task` invocation.
+Status: approved MVP requirements revised for plaintext Markdown storage (D-21). Stage 1 records historical planning completion; stage 2 is complete, including the application skeleton, contracts and technical policy. Markdown storage is not implemented. Tasks 2.2–2.4 provide the format, isolated prototype and build automation. The [technical foundation](technical-foundation.md) specifies ports and local settings/logging policy; it does not implement production adapters. Further implementation requires a separate instruction or `next-task` invocation.
 
 ## 1. Purpose and scope
 
@@ -56,7 +56,7 @@ Only `https://` and `http://` links may be opened. The application passes them t
 - The user chooses the catalog root directory; its path is remembered per Windows user.
 - Hierarchy: catalog root → topic directories at one level → one Markdown (`.md`) file per website entry.
 - All entry fields, including usernames and website passwords, are plaintext. UI masking does not encrypt files or backups.
-- Manual editing outside the application follows the [Markdown catalog format v1](markdown-format.md), specified in task 2.2: restricted YAML front matter, a Markdown description, stable identifiers, metadata files, filenames, and versioning. Any malformed or unsupported content makes the catalog read-only and blocks mutations and export until corrected and reloaded; original files are preserved. Format implementation and round-trip verification remain future work.
+- Manual editing outside the application follows the [Markdown catalog format v1](markdown-format.md), specified in task 2.2: restricted YAML front matter, a Markdown description, stable identifiers, metadata files, filenames, and versioning. Any malformed or unsupported content makes the catalog read-only and blocks mutations and export until corrected and reloaded; original files are preserved. An isolated prototype verifies format round trips; production storage remains future work.
 - Reloading the catalog reflects valid external edits in details and search, including renamed, moved, or deleted files. Detect conflicts with in-app edits and never silently overwrite external changes or recreate stale records. Report malformed or unsupported files clearly and preserve their original contents.
 - Save changes safely: failed or interrupted writes must preserve a recoverable previously saved state.
 - No telemetry in the MVP. Technical logs and error messages must not contain entry contents or secrets.
@@ -82,6 +82,8 @@ Use the working name **Use Config**. Final application name, publisher identity,
 Tens of thousands of users do not require server infrastructure for this product. A production foundation means reliable storage, safe updates, format compatibility, and verifiable builds. Before public release, separately review data integrity, credential display, and file handling and dependency licenses.
 
 ## 5. Verification and completion criteria
+
+Each task is subject to the user-mandated shared limit of five minutes and five verification command invocations, including retries and all build/test/smoke checks. Stop at either limit and report missing evidence; do not weaken acceptance criteria or claim omitted checks passed. See [build.md](build.md#mandatory-verification-budget).
 
 The MVP is complete when the following have been verified:
 

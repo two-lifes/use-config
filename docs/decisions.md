@@ -55,6 +55,12 @@ The [format specification](markdown-format.md) defines `_catalog.md`, `_topic.md
 
 This specifies D-21 without changing plaintext storage, UI masking, or the agreed reveal/clipboard timers. It authorizes documentation only: no application code, dependency selection, or task 2.3 prototype is included. The specification is not evidence of working storage. Task 2.2 completion marking remains a separate finalization action; C2 remains open. Commit and push require separate permission.
 
+### D-23 — Remaining stage 2 foundation and verification budget (confirmed, 2026-10-25)
+
+The user explicitly authorized implementing tasks 2.5–2.6 together: compilable UI-independent contracts and the settings/logging/error policy in [technical-foundation.md](technical-foundation.md), without production adapters or stage 3 implementation. The user subsequently explicitly approved marking 2.5, 2.6 and C2 complete, updating documentation/AGENTS.md, and committing and pushing all related work on 2026-10-25. Stage 3 remains unstarted. Verification evidence is recorded in technical-foundation.md.
+
+The user prohibits prolonged checks: a shared maximum of five minutes and five verification command invocations for the whole task, including retries, builds, formatting and smoke checks. Stop at either limit, report unverified outcomes and do not reset or bypass the budget. This overrides exhaustive verification workflows, not product acceptance criteria.
+
 ### Workflow decision
 
 **D-13 — Confirmed by the user:** add the `next-task` project chat command. Each explicit invocation selects one unfinished `X.Y` item, executes it, and runs fast checks or expanded stage-completion checks when it is the final item. Then offer documentation completion marks, commit, and push. Invocation authorizes the selected work but does not confirm unresolved product choices or automatically authorize finalization. The user confirmed on 2026-10-25 that this command must be a repository skill with explicit invocation via `$next-task`, rather than a project document; plain `next-task` remains an explicit chat command. See the [next-task skill](../.agents/skills/next-task/SKILL.md). This refines D-08: creating the command remains documentation work; explicitly invoking it authorizes the selected task.
