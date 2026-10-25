@@ -1,6 +1,6 @@
 # Technical foundation contracts
 
-Tasks 2.5–2.6 define contracts and policy. The interfaces live in [UseConfig.Catalog](../src/UseConfig.Catalog/UseConfig.Catalog.csproj), which has no WPF or storage dependency. Storage and Windows integration implement these ports; App composes them. The isolated storage prototype remains experimental. The user approved completion marks for 2.5, 2.6 and C2 on 2026-10-25. Stage 3 now includes completed tasks 3.1–3.5; C3 remains open. Historical incremental results below are retained for traceability.
+Tasks 2.5–2.6 define contracts and policy. The interfaces live in [UseConfig.Catalog](../src/UseConfig.Catalog/UseConfig.Catalog.csproj), which has no WPF or storage dependency. Storage and Windows integration implement these ports; App composes them. The isolated storage prototype remains experimental. The user approved completion marks for 2.5, 2.6 and C2 on 2026-10-25. Stage 3 now includes completed tasks 3.1–3.6; C3 remains open. Historical incremental results below are retained for traceability.
 
 ## Task 3.3 implementation and verification
 
@@ -104,9 +104,9 @@ The complete `scripts/verify.ps1` passed on the host: solution, storage probe an
 
 Local documentation file links and `git diff --check` passed before this results-only update. The stage review confirms the format specification, isolated file/ZIP evidence, build automation, layer contracts and settings/logging policy needed for C2. The user subsequently approved marking tasks 2.5–2.6 and C2 complete on 2026-10-25; they are now checked in tasks.md. Minimum supported Windows versions, native production adapters and remote CI were not tested. No commit or push was performed during verification; the user subsequently authorized committing and pushing the completed work.
 
-## Task 3.6 implementation in progress (2026-10-26)
+## Task 3.6 implementation and verification (2026-10-26)
 
-Task 3.6 and checkpoint C3 remain open. This working-tree implementation is not ready for production use: the initial mutation failure was corrected in the authorized retry below, but the recovery UI and additional fault/race cases remain unverified. No commit or push is authorized for this task.
+Task 3.6 was closed with explicit user approval after the final verification recorded below. Checkpoint C3 remains open. The incremental records retain earlier failures and limitations; later results supersede them. The implementation and UI/check results were committed and pushed as 6ca23aa.
 
 ### Implemented scope, pending verification
 
@@ -159,3 +159,7 @@ The expanded executable passed twice, including after formatting: **176 passed, 
 Formatting was applied to the changed checks. The final verify-no-changes command reported CA1416 platform warnings in the new ACL checks. An explicit Windows requirement was then added to the check entry point (it fails on unsupported platforms rather than skipping checks). That final guard was not rerun because the time window expired. The solution production code is unchanged from the prior successful Debug build and formatting verification.
 
 The user stopped Computer Use with Escape during the closing step, after recovery had already succeeded. No normal UI shutdown is claimed. Remaining limitations: the final platform-guard formatting verification, actual process termination inside cleanup (partial cleanup was simulated), and physical disk-full/OS-level preparation-write faults were not exercised. Task 3.6 and C3 remain open pending the remaining verification/finalization. The user separately authorized committing and pushing the current implementation and documented results to origin/work.
+
+### Task 3.6 closure (2026-10-26)
+
+The user explicitly requested closure after verification. The final post-guard contract executable passed **176 checks, 0 failures**, and contract-project `dotnet format --verify-no-changes --no-restore` passed without diagnostics. Together with the previously successful Debug solution build, solution formatting and actual WPF separate-copy recovery/cancellation checks, this closes task 3.6. C3 remains open; the next numbered task is 3.7. Physical disk-full/OS-level preparation-write faults and killing a process during cleanup remain untested limits; partial cleanup was simulated and retry verified. These limits are not claimed as successful tests.

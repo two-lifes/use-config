@@ -1,6 +1,6 @@
 # MVP Implementation Sequence
 
-Status: stages 1 and 2 are complete. Stage 3 tasks 3.1–3.5 are complete: models, catalog selection/persistence, plaintext explanation and recovery handling, Markdown parsing/serialization and validation. The user authorized the 3.4–3.5 dependencies while completing 3.2 and requested completion marks. Task 3.3 was marked complete with explicit user approval on 2026-10-25; task 3.6 is the next unchecked numbered item; C3 remains open. See the [implementation and verification record](technical-foundation.md#task-32-completion-and-markdown-dependencies).
+Status: stages 1 and 2 are complete. Stage 3 tasks 3.1–3.6 are complete: models, catalog selection/persistence, plaintext explanation and recovery handling, Markdown parsing/serialization and validation. The user authorized the 3.4–3.5 dependencies while completing 3.2 and requested completion marks. Task 3.3 was marked complete with explicit user approval on 2026-10-25; task 3.6 was closed with explicit user approval on 2026-10-26 after final verification; task 3.7 is next; C3 remains open. See the [implementation and verification record](technical-foundation.md#task-32-completion-and-markdown-dependencies).
 
 Revision (2026-10-25, D-21): current requirements use plaintext Markdown and ZIP backups. Stage 1 checkmarks and its completion record are historical; superseded storage/protection choices below are not current requirements. Task 2.1 remains complete. No revised task or checkpoint is completed by this documentation update.
 
@@ -67,7 +67,7 @@ Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundat
 - [x] 3.3. Explain that Markdown files and ZIP backups contain plaintext credentials; handle canceled selection and missing or inaccessible catalog directories without replacing data.
 - [x] 3.4. Implement Markdown parsing and serialization according to 2.2; preserve supported Unicode and multiline field values.
 - [x] 3.5. Validate catalog structure and files; report malformed or unsupported content without rewriting the original files or logging entry contents.
-- [ ] 3.6. Implement safe writes and external-change conflict detection; preserve the previous saved state on failures and never silently overwrite external edits.
+- [x] 3.6. Implement safe writes and external-change conflict detection; preserve the previous saved state on failures and never silently overwrite external edits.
 - [ ] 3.7. Prepare format versioning and supported migrations with a backup before changes; do not modify unsupported formats.
 - [ ] 3.8. Test directory creation/reopening, canceled selection, missing paths, Unicode, multiline fields, malformed files, unsupported versions, external edits, denied access, insufficient space, and interrupted writes.
 
