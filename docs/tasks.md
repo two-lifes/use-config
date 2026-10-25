@@ -1,6 +1,6 @@
 # MVP Implementation Sequence
 
-Status: stage 1 is complete; tasks 1.1–1.8 and C1 are checked. Application code has not been created. Stage 2 has not started and requires a separate instruction or `next-task` invocation.
+Status: stage 1 is complete; tasks 1.1–1.8 and C1 are checked. Stage 2 has started: task 2.1 is complete, with a four-project application skeleton and a minimal WPF window verified on Windows. C2 remains open. Further tasks require a separate instruction or `next-task` invocation.
 
 Sources: [product.md](product.md), [US-01–US-10](user-stories.md), [decision statuses D/P](decisions.md), and [design.md](design.md). Stage 1 choices are confirmed in D-15–D-20; checked planning items do not imply implemented features or verified Windows compatibility.
 
@@ -36,14 +36,16 @@ Verification (2026-10-25, cloud workspace): stage 1 decisions were checked again
 
 ## 2. Prepare the technical foundation
 
-Dependency: C1 (complete). P-01 is confirmed; start this stage only when instructed.
+Dependency: C1 (complete). P-01 is confirmed; task 2.1 was explicitly authorized and completed. Continue only with a separate instruction or `next-task` invocation.
 
-- [ ] 2.1. Create the solution and separate the WPF UI, catalog operations, protected storage, and Windows integration.
+- [x] 2.1. Create the solution and separate the WPF UI, catalog operations, protected storage, and Windows integration.
 - [ ] 2.2. Select a compatible .NET provider and native SQLCipher x64 build; review licenses and redistribution rights.
 - [ ] 2.3. Use a small technical prototype to verify actual database encryption, incorrect-key rejection, backup operations, and rekeying support.
 - [ ] 2.4. Pin dependency versions and document build/test commands on Windows; arrange automated execution of these checks.
 - [ ] 2.5. Define interfaces for URL launching, clipboard access, time/inactivity, and file operations so they can be tested independently of the UI.
 - [ ] 2.6. Define the Windows user data directory, technical log location, and error handling without entry contents or secrets. Do not add telemetry.
+
+Task 2.1 verification (2026-10-25, Windows build 26200 x64, .NET SDK 10.0.402 / runtime 10.0.13): restore, Debug and Release builds (zero warnings/errors), and `dotnet format --verify-no-changes --no-restore` passed. Project references match the intended acyclic layer structure. The Release window opened with the expected English text and closed normally with exit code 0. Git excludes build artifacts. No business logic or automated test suite exists yet; SQLCipher integration and compatibility across all target Windows versions remain unverified. C2 is not complete.
 
 - [ ] **Checkpoint C2:** a minimal application builds and runs on Windows; the chosen SQLCipher integration works, and dependencies and layers are defined.
 

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/UseConfig.App/UseConfig.App.csproj" />
+    <Project Path="src/UseConfig.Catalog/UseConfig.Catalog.csproj" />
+    <Project Path="src/UseConfig.Storage/UseConfig.Storage.csproj" />
+    <Project Path="src/UseConfig.Windows/UseConfig.Windows.csproj" />
+  </Folder>
+</Solution>

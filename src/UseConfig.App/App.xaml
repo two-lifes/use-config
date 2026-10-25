@@ -1,0 +1,10 @@
+<Application x:Class="UseConfig.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="CanvasBrush" Color="#0c0c0d" />
+        <SolidColorBrush x:Key="PrimaryTextBrush" Color="#f0f0f1" />
+        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#ababaf" />
+    </Application.Resources>
+</Application>
