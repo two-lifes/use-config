@@ -41,7 +41,7 @@ Verification (2026-10-25, cloud workspace): stage 1 decisions were checked again
 Dependency: C1 (historical planning complete) and the approved D-21 revision. Task 2.1 was explicitly authorized and completed. Continue only with a separate instruction or `next-task` invocation.
 
 - [x] 2.1. Create the solution and separate the WPF UI, catalog operations, protected storage, and Windows integration.
-- [ ] 2.2. Specify the Markdown catalog format: fields, stable identifiers, filenames, single-level topic directories, format version, manual editing rules, and malformed-file handling. Define syntax here before implementation.
+- [x] 2.2. Specify the Markdown catalog format: fields, stable identifiers, filenames, single-level topic directories, format version, manual editing rules, and malformed-file handling. Define syntax here before implementation.
 - [ ] 2.3. Use a small technical prototype to verify Markdown read/write round trips, Unicode and multiline fields, external-change detection, safe file replacement, and ZIP round trips on Windows; review licenses of any required dependencies.
 - [ ] 2.4. Pin dependency versions and document build/test commands on Windows; arrange automated execution of these checks.
 - [ ] 2.5. Define interfaces for URL launching, clipboard access, reveal/clipboard timing, and catalog/file operations so they can be tested independently of the UI.

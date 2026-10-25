@@ -47,6 +47,14 @@ The user explicitly approved replacing the storage/protection foundation and imp
 
 This supersedes the earlier storage/protection choices identified above, not their historical approval records. Stage 1 completion and task 2.1 remain recorded; C2 and all revised future tasks stay open. No implementation, dependency installation, commit, or push is authorized by this documentation revision.
 
+### D-22 — Markdown catalog format v1 (confirmed, 2026-10-25)
+
+The user selected YAML front matter with a Markdown description, readable topic directories with stable-ID metadata, readable website filenames with UUID suffixes, and catalog-wide read-only handling when any content is malformed or unsupported. The user then explicitly approved implementing the task 2.2 documentation plan.
+
+The [format specification](markdown-format.md) defines `_catalog.md`, `_topic.md`, entry fields, the restricted YAML syntax, UTF-8 and newline rules, stable identities, filename rules, manual edits, validation, external-change conflicts, and ZIP layout. Unknown content is an error rather than silently discarded. Mutations and export remain blocked until the catalog validates; diagnostics exclude field values and technical logs also exclude user path names. Version 1 is the only initially supported version; future migrations require tested compatibility and a prior backup.
+
+This specifies D-21 without changing plaintext storage, UI masking, or the agreed reveal/clipboard timers. It authorizes documentation only: no application code, dependency selection, or task 2.3 prototype is included. The specification is not evidence of working storage. Task 2.2 completion marking remains a separate finalization action; C2 remains open. Commit and push require separate permission.
+
 ### Workflow decision
 
 **D-13 — Confirmed by the user:** add the `next-task` project chat command. Each explicit invocation selects one unfinished `X.Y` item, executes it, and runs fast checks or expanded stage-completion checks when it is the final item. Then offer documentation completion marks, commit, and push. Invocation authorizes the selected work but does not confirm unresolved product choices or automatically authorize finalization. See [next-task.md](next-task.md). This refines D-08: creating the command remains documentation work; explicitly invoking it authorizes the selected task.

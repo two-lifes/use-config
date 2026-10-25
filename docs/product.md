@@ -56,7 +56,7 @@ Only `https://` and `http://` links may be opened. The application passes them t
 - The user chooses the catalog root directory; its path is remembered per Windows user.
 - Hierarchy: catalog root → topic directories at one level → one Markdown (`.md`) file per website entry.
 - All entry fields, including usernames and website passwords, are plaintext. UI masking does not encrypt files or backups.
-- Manual editing outside the application is supported according to a documented format. Task 2.2 defines syntax, fields, stable identifiers, filenames, format versioning, and invalid-file handling before storage implementation.
+- Manual editing outside the application follows the [Markdown catalog format v1](markdown-format.md), specified in task 2.2: restricted YAML front matter, a Markdown description, stable identifiers, metadata files, filenames, and versioning. Any malformed or unsupported content makes the catalog read-only and blocks mutations and export until corrected and reloaded; original files are preserved. Format implementation and round-trip verification remain future work.
 - Reloading the catalog reflects valid external edits in details and search, including renamed, moved, or deleted files. Detect conflicts with in-app edits and never silently overwrite external changes or recreate stale records. Report malformed or unsupported files clearly and preserve their original contents.
 - Save changes safely: failed or interrupted writes must preserve a recoverable previously saved state.
 - No telemetry in the MVP. Technical logs and error messages must not contain entry contents or secrets.
