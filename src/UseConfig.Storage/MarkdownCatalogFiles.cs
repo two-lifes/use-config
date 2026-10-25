@@ -10,9 +10,35 @@ public sealed class MarkdownCatalogFiles : ICatalogFiles, ICatalogRecovery
     private readonly ConditionalWeakTable<RecoveryOperation, RecoveryData> recoveries = new();
     private readonly SemaphoreSlim gate = new(1);
     private readonly Action<string>? checkpoint;
+    private readonly CatalogMigrationRegistry migrationRegistry = CatalogMigrationRegistry.Production;
 
     public MarkdownCatalogFiles() { }
     internal MarkdownCatalogFiles(Action<string> checkpoint) => this.checkpoint = checkpoint;
+    internal MarkdownCatalogFiles(CatalogMigrationRegistry registry, Action<string>? checkpoint = null)
+    {
+        migrationRegistry = registry;
+        this.checkpoint = checkpoint;
+    }
+
+    public Task<OperationResult<PreparedCatalogMigration>> PrepareMigrationAsync(string rootPath, CatalogRevision revision,
+        string? backupParent, CancellationToken cancellationToken) => Run(() =>
+    {
+        var root = LocationPaths.Normalize(rootPath);
+        if (!revisions.TryGetValue(revision, out var original) || !root.Equals(original.Root, StringComparison.OrdinalIgnoreCase))
+            throw new CatalogFault(ErrorCode.Conflict);
+        if (original.Diagnostics.Any(item => item.Code == ErrorCode.RecoveryRequired)) throw new CatalogFault(ErrorCode.RecoveryRequired);
+        if (original.Diagnostics.Any(item => item.Code is not (ErrorCode.UnsupportedFormat or ErrorCode.RecoveryCleanupFailed)))
+            throw new CatalogFault(ErrorCode.ReadOnly);
+        using var lease = new RecoveryLease(root, false);
+        var diagnostics = new List<Diagnostic>();
+        CatalogRecoveryStore.Scan(lease, root, diagnostics);
+        if (diagnostics.Any(item => item.Code == ErrorCode.RecoveryRequired)) throw new CatalogFault(ErrorCode.RecoveryRequired);
+        using var tree = new CatalogTree(root, null, cancellationToken);
+        var current = tree.Capture();
+        if (!current.SameAs(original)) throw new CatalogFault(ErrorCode.Conflict);
+        if (current.Diagnostics.Any(item => item.Code != ErrorCode.UnsupportedFormat)) throw new CatalogFault(ErrorCode.ReadOnly);
+        return new CatalogMigrationRunner(migrationRegistry, checkpoint).Prepare(tree, current, revision, backupParent, cancellationToken);
+    }, cancellationToken);
 
     public Task<OperationResult<CatalogSnapshot>> ReadAsync(string rootPath, CancellationToken cancellationToken) =>
         Run(() => ReadCore(LocationPaths.Normalize(rootPath), cancellationToken), cancellationToken);

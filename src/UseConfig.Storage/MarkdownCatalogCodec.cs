@@ -24,6 +24,12 @@ public static class MarkdownCatalogCodec
     {
         try
         {
+            var version = ReadVersion(bytes);
+            if (version is OperationResult<int>.Failure failure)
+                return new OperationResult<ParsedCatalogDocument>.Failure(failure.Code);
+            // Each supported version needs its own explicitly selected parser.
+            if (version is not OperationResult<int>.Success { Value: 1 })
+                return new OperationResult<ParsedCatalogDocument>.Failure(ErrorCode.UnsupportedFormat);
             return new OperationResult<ParsedCatalogDocument>.Success(Parse(bytes, kind));
         }
         catch (FormatException exception)
@@ -33,6 +39,30 @@ public static class MarkdownCatalogCodec
         }
         catch (DecoderFallbackException) { return new OperationResult<ParsedCatalogDocument>.Failure(ErrorCode.MalformedContent); }
         catch (EncoderFallbackException) { return new OperationResult<ParsedCatalogDocument>.Failure(ErrorCode.MalformedContent); }
+    }
+
+    internal static OperationResult<int> ReadVersion(byte[] bytes)
+    {
+        try
+        {
+            var text = Normalize(Utf8.GetString(bytes));
+            if (text.StartsWith('\uFEFF')) text = text[1..];
+            var lines = text.Split('\n');
+            if (lines[0] != "---") throw new FormatException();
+            var end = Array.IndexOf(lines, "---", 1);
+            if (end < 0) throw new FormatException();
+            var versions = lines[1..end].Where(line => line.StartsWith("format_version:", StringComparison.Ordinal)).ToArray();
+            if (versions.Length != 1 || !Regex.IsMatch(versions[0], "\\Aformat_version: [0-9]+\\z"))
+                throw new FormatException();
+            var source = versions[0][16..];
+            if (!int.TryParse(source, NumberStyles.None, CultureInfo.InvariantCulture, out var version)
+                || source != version.ToString(CultureInfo.InvariantCulture))
+                return new OperationResult<int>.Failure(ErrorCode.UnsupportedFormat);
+            return new OperationResult<int>.Success(version);
+        }
+        catch (FormatException) { return new OperationResult<int>.Failure(ErrorCode.MalformedContent); }
+        catch (DecoderFallbackException) { return new OperationResult<int>.Failure(ErrorCode.MalformedContent); }
+        catch (EncoderFallbackException) { return new OperationResult<int>.Failure(ErrorCode.MalformedContent); }
     }
 
     private static ParsedCatalogDocument Parse(byte[] bytes, CatalogDocumentKind kind)
@@ -61,7 +91,10 @@ public static class MarkdownCatalogCodec
             {
                 if (versionSeen || !Regex.IsMatch(source, "\\A[0-9]+\\z")) throw new FormatException();
                 versionSeen = true;
-                if (source != "1") throw new VersionException();
+                if (!int.TryParse(source, NumberStyles.None, CultureInfo.InvariantCulture, out var version)
+                    || source != version.ToString(CultureInfo.InvariantCulture)
+                    || !CatalogFormat.SupportedVersions.Contains(version))
+                    throw new VersionException();
                 continue;
             }
             if (!keys.Contains(key) || fields.ContainsKey(key)) throw new FormatException();
@@ -152,7 +185,7 @@ public static class MarkdownCatalogCodec
     {
         try
         {
-            var output = new StringBuilder("---\nformat_version: 1\n");
+            var output = new StringBuilder($"---\nformat_version: {CatalogFormat.CurrentVersion}\n");
             var keys = Keys(document.Kind);
             if (document.Fields.Keys.Any(key => !keys.Contains(key))) throw new FormatException();
             foreach (var key in keys)

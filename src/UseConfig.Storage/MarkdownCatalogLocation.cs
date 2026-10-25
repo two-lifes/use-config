@@ -5,7 +5,7 @@ namespace UseConfig.Storage;
 
 public sealed class MarkdownCatalogLocation(string settingsDirectory, MarkdownCatalogFiles? catalogFiles = null) : ICatalogLocation
 {
-    private const string Metadata = "---\nformat_version: 1\n---\n";
+    private static readonly string Metadata = System.FormattableString.Invariant($"---\nformat_version: {CatalogFormat.CurrentVersion}\n---\n");
     private readonly string settingsPath = LocationPaths.Normalize(settingsDirectory);
     private readonly MarkdownCatalogFiles files = catalogFiles ?? new();
 
@@ -45,6 +45,12 @@ public sealed class MarkdownCatalogLocation(string settingsDirectory, MarkdownCa
             var result = files.ReadAsync(root, cancellationToken).GetAwaiter().GetResult();
             if (result is OperationResult<CatalogSnapshot>.Failure failure) return Fail(failure.Code);
             var snapshot = ((OperationResult<CatalogSnapshot>.Success)result).Value;
+            if (!snapshot.IsReadOnly)
+            {
+                var preparation = files.PrepareMigrationAsync(root, snapshot.Revision, null, cancellationToken).GetAwaiter().GetResult();
+                if (preparation is OperationResult<PreparedCatalogMigration>.Failure preparationFailure)
+                    return Fail(preparationFailure.Code);
+            }
             var loaded = new MarkdownCatalogValidator().Load(root, snapshot.Documents, snapshot.Diagnostics);
             return new OperationResult<OpenedCatalog>.Success(new OpenedCatalog(root, loaded.Folders, loaded.Entries, loaded.Diagnostics.Distinct()));
         }

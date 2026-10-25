@@ -106,6 +106,7 @@ try
     await CatalogLoadingChecks.RunAsync(Check);
     if (OperatingSystem.IsWindows())
     {
+        await MigrationChecks.RunAsync(Check);
         await CatalogAccessChecks.RunAsync(Check);
         await StorageWriteChecks.RunAsync(Check);
     }

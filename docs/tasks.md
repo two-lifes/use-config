@@ -1,6 +1,6 @@
 # MVP Implementation Sequence
 
-Status: stages 1 and 2 are complete. Stage 3 tasks 3.1–3.6 are complete: models, catalog selection/persistence, plaintext explanation and recovery handling, Markdown parsing/serialization and validation. The user authorized the 3.4–3.5 dependencies while completing 3.2 and requested completion marks. Task 3.3 was marked complete with explicit user approval on 2026-10-25; task 3.6 was closed with explicit user approval on 2026-10-26 after final verification; task 3.7 is next; C3 remains open. See the [implementation and verification record](technical-foundation.md#task-32-completion-and-markdown-dependencies).
+Status: stages 1 and 2 are complete. Stage 3 tasks 3.1–3.7 are complete: models, catalog selection/persistence, plaintext explanation, Markdown parsing/validation, safe writes/recovery, and version/migration preparation. Task 3.7 was reopened after review and closed only after the verified repair on 2026-10-26, as explicitly requested by the user. Only v1 is supported; the production migration registry has no transitions. Task 3.8 is next; C3 remains open. See the [migration preparation repair](technical-foundation.md#task-37-migration-preparation-repair-2026-10-26).
 
 Revision (2026-10-25, D-21): current requirements use plaintext Markdown and ZIP backups. Stage 1 checkmarks and its completion record are historical; superseded storage/protection choices below are not current requirements. Task 2.1 remains complete. No revised task or checkpoint is completed by this documentation update.
 
@@ -68,7 +68,7 @@ Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundat
 - [x] 3.4. Implement Markdown parsing and serialization according to 2.2; preserve supported Unicode and multiline field values.
 - [x] 3.5. Validate catalog structure and files; report malformed or unsupported content without rewriting the original files or logging entry contents.
 - [x] 3.6. Implement safe writes and external-change conflict detection; preserve the previous saved state on failures and never silently overwrite external edits.
-- [ ] 3.7. Prepare format versioning and supported migrations with a backup before changes; do not modify unsupported formats.
+- [x] 3.7. Prepare format versioning and supported migrations with a backup before changes; do not modify unsupported formats.
 - [ ] 3.8. Test directory creation/reopening, canceled selection, missing paths, Unicode, multiline fields, malformed files, unsupported versions, external edits, denied access, insufficient space, and interrupted writes.
 
 - [ ] **Checkpoint C3:** US-01 and the storage foundations of US-09 are verified; saved state survives restarts and tested write failures, and invalid files are preserved.
@@ -76,6 +76,8 @@ Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundat
 Task 3.1 verification (2026-10-25, Windows x64): the Debug solution build passed with zero warnings/errors, and all 20 contract checks passed, including nine model checks. Solution and contract-project formatting checks passed outside the sandbox after sandbox MSBuild pipe access failures. See the [model verification record](technical-foundation.md#task-31-models-and-verification). Production storage, tasks 3.2–3.8 and C3 remain open.
 
 Task 3.2 and dependencies verification (2026-10-25, Windows x64): Debug build, 106 checks, solution/test formatting and UI reopening of a populated catalog passed. Canceling the picker retained the loaded records. Ten verification calls took approximately 93 seconds; initial formatting findings were corrected. Safe catalog mutations, migrations and the broader failure matrix remain 3.6–3.8. Historical evidence above describes the state at task 3.1, not current completion. C3 remains open.
+
+Task 3.7 repair verification (2026-10-26, Windows x64 / SDK 10.0.402): Debug solution and contract-project builds passed without warnings/errors; the contract executable passed 203 checks twice, including 27 migration-preparation checks. Solution and contract-project formatting verification passed outside the sandbox. This supersedes the insufficient original 181-check evidence. See the [migration preparation repair](technical-foundation.md#task-37-migration-preparation-repair-2026-10-26) for the exact boundary. Only v1 is supported; no legacy format is invented. Task 3.8 and C3 remain open.
 
 ## 4. Build the UI foundation
 

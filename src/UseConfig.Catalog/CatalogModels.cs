@@ -3,6 +3,7 @@ namespace UseConfig.Catalog;
 public static class CatalogFormat
 {
     public const int CurrentVersion = 1;
+    public static IReadOnlyList<int> SupportedVersions { get; } = Array.AsReadOnly(new[] { CurrentVersion });
 }
 
 public sealed class CatalogFolder(Guid id, string name, int formatVersion = CatalogFormat.CurrentVersion)

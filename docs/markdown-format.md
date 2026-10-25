@@ -1,6 +1,6 @@
 # Markdown Catalog Format v1
 
-Status: specified in task 2.2 under D-21 and D-22. The isolated task 2.3 prototype verified feasibility; tasks 3.2, 3.4 and 3.5 now implement opening, parsing/serialization and validation with recorded Windows checks. Safe catalog mutations and migrations remain future tasks. See [implementation evidence](technical-foundation.md#task-32-completion-and-markdown-dependencies). Requirements: [product.md](product.md), [user stories](user-stories.md), and [decisions.md](decisions.md).
+Status: specified in task 2.2 under D-21 and D-22. The isolated task 2.3 prototype verified feasibility; tasks 3.2, 3.4 and 3.5 now implement opening, parsing/serialization and validation with recorded Windows checks. Task 3.6 implements safe writes/recovery; task 3.7 adds verified migration preparation with no production transitions. Only v1 is supported. See [implementation evidence](technical-foundation.md#task-32-completion-and-markdown-dependencies). Requirements: [product.md](product.md), [user stories](user-stories.md), and [decisions.md](decisions.md).
 
 ## 1. Catalog layout and identity
 
@@ -151,7 +151,7 @@ A ZIP backup represents a validated, consistent complete catalog: `_catalog.md` 
 
 Restoration follows [product.md](product.md): confirmation, unsaved-edit handling, and a successful backup of the current valid catalog precede replacement. An invalid active catalog cannot be replaced through this flow while its required backup is blocked. A separate manual filesystem copy may preserve it for repair, but is not a validated application export.
 
-Only version 1 is supported initially. No legacy versions or migrations are implied. A future version requires an explicit compatibility definition, tested migration, and backup before changes. Never silently downgrade an unsupported file. Original malformed or unsupported files remain unchanged.
+Only version 1 is supported initially. No legacy versions or migrations are implied. The [migration preparation foundation](technical-foundation.md#task-37-migration-preparation-repair-2026-10-26) validates version routing and prepares a verified raw-file backup and separate candidate documents for explicitly registered transitions; the production transition registry is empty. A future version requires an explicit compatibility definition, tested migration, compatible safe-write/recovery support, and backup before changes. Never silently downgrade an unsupported file. Original malformed or unsupported files remain unchanged.
 
 ## 7. Verification boundary
 
