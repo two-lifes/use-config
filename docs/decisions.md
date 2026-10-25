@@ -57,7 +57,7 @@ This specifies D-21 without changing plaintext storage, UI masking, or the agree
 
 ### D-23 — Remaining stage 2 foundation and verification budget (confirmed, 2026-10-25)
 
-The user explicitly authorized implementing tasks 2.5–2.6 together: compilable UI-independent contracts and the settings/logging/error policy in [technical-foundation.md](technical-foundation.md), without production adapters or stage 3 implementation. The user subsequently explicitly approved marking 2.5, 2.6 and C2 complete, updating documentation/AGENTS.md, and committing and pushing all related work on 2026-10-25. Stage 3 remains unstarted. Verification evidence is recorded in technical-foundation.md.
+The user explicitly authorized implementing tasks 2.5–2.6 together: compilable UI-independent contracts and the settings/logging/error policy in [technical-foundation.md](technical-foundation.md), without production adapters or stage 3 implementation. The user subsequently explicitly approved marking 2.5, 2.6 and C2 complete, updating documentation/AGENTS.md, and committing and pushing all related work on 2026-10-25. Stage 3 was not started by that authorization; the user subsequently authorized task 3.1 implementation and its completion mark separately. Verification evidence is recorded in technical-foundation.md.
 
 The user prohibits prolonged checks: a shared maximum of five minutes and five verification command invocations for the whole task, including retries, builds, formatting and smoke checks. Stop at either limit, report unverified outcomes and do not reset or bypass the budget. This overrides exhaustive verification workflows, not product acceptance criteria.
 

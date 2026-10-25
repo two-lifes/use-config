@@ -1,6 +1,12 @@
 # Technical foundation contracts
 
-Tasks 2.5–2.6 define contracts and policy, not production adapters. The interfaces live in [UseConfig.Catalog](../src/UseConfig.Catalog/UseConfig.Catalog.csproj), which has no WPF or storage dependency. Storage and Windows integration implement these ports in later stages; App composes them. The isolated storage prototype remains experimental. The user approved completion marks for 2.5, 2.6 and C2 on 2026-10-25; stage 3 remains unstarted.
+Tasks 2.5–2.6 define contracts and policy, not production adapters. The interfaces live in [UseConfig.Catalog](../src/UseConfig.Catalog/UseConfig.Catalog.csproj), which has no WPF or storage dependency. Storage and Windows integration implement these ports in later stages; App composes them. The isolated storage prototype remains experimental. The user approved completion marks for 2.5, 2.6 and C2 on 2026-10-25. Stage 3 has started with the completed task 3.1 models; task 3.2 is next, and C3 remains open.
+
+## Task 3.1 models and verification
+
+[CatalogModels.cs](../src/UseConfig.Catalog/CatalogModels.cs) defines immutable `CatalogFolder` and `WebsiteEntry` classes with explicit stable IDs, an in-memory `FolderId` relationship, all product fields and a separate description. `CatalogFormat.CurrentVersion` is 1. Optional text defaults to empty strings; supplied text is retained without trimming or URL normalization. Default string representations omit user contents. `FolderId` is not a Markdown field; the containing topic determines the relationship in storage. Parsing, format validation and production persistence remain later tasks.
+
+Verification on 2026-10-25, Windows x64: the Debug solution build passed with zero warnings/errors; all 20 contract checks passed, including nine new checks for model identities, relationships, versions, field preservation, defaults, read-only properties and safe string representations. The initial five-command budget included a failed PATH-based build invocation, the successful build and checks, and two formatting attempts blocked by MSBuild named-pipe access in the sandbox. After the user requested resolving the failure, two separately authorized formatting checks ran outside the sandbox and both passed with exit code 0, without source changes and within the new five-minute/five-command limit. This confirms the execution-environment restriction; its exact underlying access policy was not diagnosed. Release builds, UI and production file operations were not checked for task 3.1. The user authorized marking 3.1 complete on 2026-10-25; C3 remains open.
 
 ## Desktop ports
 

@@ -1,6 +1,6 @@
 # MVP Implementation Sequence
 
-Status: stages 1 and 2 are complete; tasks 1.1–1.8, 2.1–2.6, C1 and C2 are checked. Stage 2 provides the application skeleton, Markdown specification, isolated file/ZIP prototype, build automation and [contracts and policy](technical-foundation.md). The user authorized stage 2 completion marks on 2026-10-25. Stage 3 has not started; task 3.1 requires a separate instruction or `next-task` invocation.
+Status: stages 1 and 2 are complete; tasks 1.1–1.8, 2.1–2.6, C1 and C2 are checked. Stage 2 provides the application skeleton, Markdown specification, isolated file/ZIP prototype, build automation and [contracts and policy](technical-foundation.md). Stage 3 has started: task 3.1 provides folder and website entry models and is complete with user-authorized marking on 2026-10-25. Task 3.2 is next and requires a separate instruction or `next-task` invocation; C3 remains open.
 
 Revision (2026-10-25, D-21): current requirements use plaintext Markdown and ZIP backups. Stage 1 checkmarks and its completion record are historical; superseded storage/protection choices below are not current requirements. Task 2.1 remains complete. No revised task or checkpoint is completed by this documentation update.
 
@@ -59,7 +59,7 @@ Stage 2 completion (2026-10-25, user-authorized): verified on Windows 10.0.26200
 
 Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundations of US-09, and part of US-10.
 
-- [ ] 3.1. Define folder and entry models with stable IDs, folder relationships, all product fields including a separate description, and the format version specified in 2.2.
+- [x] 3.1. Define folder and entry models with stable IDs, folder relationships, all product fields including a separate description, and the format version specified in 2.2.
 - [ ] 3.2. Implement catalog directory selection/creation and per-user path persistence; reopen the remembered location without authentication.
 - [ ] 3.3. Explain that Markdown files and ZIP backups contain plaintext credentials; handle canceled selection and missing or inaccessible catalog directories without replacing data.
 - [ ] 3.4. Implement Markdown parsing and serialization according to 2.2; preserve supported Unicode and multiline field values.
@@ -69,6 +69,8 @@ Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundat
 - [ ] 3.8. Test directory creation/reopening, canceled selection, missing paths, Unicode, multiline fields, malformed files, unsupported versions, external edits, denied access, insufficient space, and interrupted writes.
 
 - [ ] **Checkpoint C3:** US-01 and the storage foundations of US-09 are verified; saved state survives restarts and tested write failures, and invalid files are preserved.
+
+Task 3.1 verification (2026-10-25, Windows x64): the Debug solution build passed with zero warnings/errors, and all 20 contract checks passed, including nine model checks. Solution and contract-project formatting checks passed outside the sandbox after sandbox MSBuild pipe access failures. See the [model verification record](technical-foundation.md#task-31-models-and-verification). Production storage, tasks 3.2–3.8 and C3 remain open.
 
 ## 4. Build the UI foundation
 

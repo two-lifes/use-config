@@ -1,6 +1,6 @@
 # MVP: Local Website and Credentials Catalog for Windows
 
-Status: approved MVP requirements revised for plaintext Markdown storage (D-21). Stage 1 records historical planning completion; stage 2 is complete, including the application skeleton, contracts and technical policy. Markdown storage is not implemented. Tasks 2.2–2.4 provide the format, isolated prototype and build automation. The [technical foundation](technical-foundation.md) specifies ports and local settings/logging policy; it does not implement production adapters. Further implementation requires a separate instruction or `next-task` invocation.
+Status: approved MVP requirements revised for plaintext Markdown storage (D-21). Stage 1 records historical planning completion; stage 2 is complete, including the application skeleton, contracts and technical policy. Stage 3 has started: task 3.1 adds folder and website entry models. Production Markdown storage is not implemented. Tasks 2.2–2.4 provide the format, isolated prototype and build automation. The [technical foundation](technical-foundation.md) describes the models, ports and local settings/logging policy; it does not implement production adapters. Task 3.2 is next and requires a separate instruction or `next-task` invocation.
 
 ## 1. Purpose and scope
 
