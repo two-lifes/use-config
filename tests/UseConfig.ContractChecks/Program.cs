@@ -10,6 +10,40 @@ void Check(bool condition, string name)
 
 try
 {
+    var folderId = Guid.Parse("22222222-2222-4222-8222-222222222222");
+    var entryId = Guid.Parse("33333333-3333-4333-8333-333333333333");
+    var folder = new CatalogFolder(folderId, "Тема 日本語");
+    var entry = new WebsiteEntry(entryId, folder.Id, "Пример 日本語", "HTTPS://example.com/%2f",
+        description: "  # Описание\n日本語\n\n", username: "  demo\nuser  ",
+        password: "  synthetic\npassword  ", additionalUrl: "https://example.org/%2F",
+        twoFactorNote: "  Заметка\nsecond line  ");
+    Check(folder.Id == folderId && entry.Id == entryId && entry.FolderId == folder.Id,
+        "models retain explicit stable IDs and folder relationship");
+    Check(CatalogFormat.CurrentVersion == 1 && folder.FormatVersion == 1 && entry.FormatVersion == 1,
+        "models default to catalog format version 1");
+    Check(folder.Name == "Тема 日本語" && entry.Name == "Пример 日本語"
+        && entry.Url == "HTTPS://example.com/%2f" && entry.AdditionalUrl == "https://example.org/%2F",
+        "models preserve Unicode names and original URL text");
+    Check(entry.Description == "  # Описание\n日本語\n\n" && entry.TwoFactorNote == "  Заметка\nsecond line  "
+        && entry.Username == "  demo\nuser  " && entry.Password == "  synthetic\npassword  ",
+        "models preserve multiline fields and significant whitespace");
+    var minimal = new WebsiteEntry(entryId, folderId, "Example", "https://example.com/");
+    Check(minimal.Description == "" && minimal.Username == "" && minimal.Password == ""
+        && minimal.AdditionalUrl == "" && minimal.TwoFactorNote == "",
+        "optional entry fields default to empty strings");
+    var renamedFolder = new CatalogFolder(folder.Id, "Renamed");
+    var editedEntry = new WebsiteEntry(entry.Id, entry.FolderId, "Edited", entry.Url);
+    Check(renamedFolder.Id == folder.Id && editedEntry.Id == entry.Id && editedEntry.FolderId == entry.FolderId,
+        "recreating renamed models preserves supplied identities");
+    Check(new CatalogFolder(folderId, "Future", formatVersion: 2).FormatVersion == 2
+        && new WebsiteEntry(entryId, folderId, "Future", entry.Url, formatVersion: 2).FormatVersion == 2,
+        "models retain explicit versions for later format validation");
+    Check(typeof(CatalogFolder).GetProperties().All(property => property.SetMethod is null)
+        && typeof(WebsiteEntry).GetProperties().All(property => property.SetMethod is null),
+        "model properties are read-only");
+    Check(folder.ToString() == typeof(CatalogFolder).FullName && entry.ToString() == typeof(WebsiteEntry).FullName,
+        "default model string representations omit all user contents");
+
     var clock = new ManualDelay();
     IDelayScheduler scheduler = clock;
     var reveal = scheduler.DelayAsync(CredentialTiming.RevealDuration, CancellationToken.None);
