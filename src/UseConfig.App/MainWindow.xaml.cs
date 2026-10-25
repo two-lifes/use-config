@@ -7,11 +7,14 @@ namespace UseConfig.App;
 
 public partial class MainWindow : Window
 {
-    private readonly CatalogSession session = new(
-        new MarkdownCatalogLocation(CatalogSettings.DefaultDirectory), new CatalogSettings(CatalogSettings.DefaultDirectory));
+    private readonly MarkdownCatalogFiles files = new();
+    private readonly CatalogSession session;
+    private sealed record RecoveryChoice(string Label, RecoveryOperation Operation);
 
     public MainWindow()
     {
+        session = new CatalogSession(new MarkdownCatalogLocation(CatalogSettings.DefaultDirectory, files),
+            new CatalogSettings(CatalogSettings.DefaultDirectory));
         InitializeComponent();
     }
 
@@ -65,11 +68,42 @@ public partial class MainWindow : Window
                 : session.Current is { } current ? $"Catalog is open. {current.Folders.Count} folders, {current.Entries.Count} websites."
                 : "Select an existing catalog or create one in an empty folder.";
             RetryButton.IsEnabled = true;
+            RecoveryActions.Visibility = Visibility.Collapsed;
+            if (session.CurrentPath is { } root && session.Current?.Diagnostics.Any(item => item.Code == ErrorCode.RecoveryRequired) == true)
+            {
+                var pending = await files.FindAsync(root, CancellationToken.None);
+                if (pending is OperationResult<IReadOnlyList<RecoveryOperation>>.Success success && success.Value.Count != 0)
+                {
+                    RecoveryOperations.ItemsSource = success.Value.Select((operation, index) => new RecoveryChoice($"Previous version {index + 1}", operation));
+                    RecoveryOperations.SelectedIndex = 0;
+                    RecoveryActions.Visibility = Visibility.Visible;
+                    Status.Text = "Catalog is read-only because an interrupted operation needs recovery.";
+                }
+                else Status.Text = "Recovery data could not be verified. Preserve the catalog and service copies for inspection.";
+            }
         }
         finally
         {
             Actions.IsEnabled = true;
         }
+    }
+
+    private async void SaveRecoveryCopy(object sender, RoutedEventArgs e)
+    {
+        if (session.CurrentPath is not { } root || RecoveryOperations.SelectedItem is not RecoveryChoice choice) return;
+        var dialog = new OpenFolderDialog { Title = "Choose an external folder for a recovery copy", Multiselect = false };
+        try { if (dialog.ShowDialog(this) != true) return; }
+        catch (System.Runtime.InteropServices.COMException) { Status.Text = "The folder picker is unavailable. Please try again."; return; }
+        Actions.IsEnabled = false;
+        RecoveryActions.IsEnabled = false;
+        try
+        {
+            var result = await files.SaveCopyAsync(root, choice.Operation, dialog.FolderName, CancellationToken.None);
+            Status.Text = result is OperationResult<string>.Success success
+                ? $"Recovery copy saved to {success.Value}. The current catalog is unchanged. Choose the copy explicitly to open it."
+                : Describe(((OperationResult<string>.Failure)result).Code);
+        }
+        finally { Actions.IsEnabled = true; RecoveryActions.IsEnabled = true; }
     }
 
     private static string Describe(ErrorCode code) => code switch

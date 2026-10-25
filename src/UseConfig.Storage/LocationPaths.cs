@@ -34,6 +34,17 @@ internal static class LocationPaths
 
     public static ErrorCode? Classify(Exception exception) => exception switch
     {
+        CatalogFault fault => fault.Code,
+        System.ComponentModel.Win32Exception native => native.NativeErrorCode switch
+        {
+            2 or 3 => ErrorCode.NotFound,
+            5 => ErrorCode.AccessDenied,
+            32 or 33 => ErrorCode.Conflict,
+            80 or 183 => ErrorCode.AlreadyExists,
+            39 or 112 => ErrorCode.InsufficientSpace,
+            87 or 123 or 206 => ErrorCode.InvalidInput,
+            _ => ErrorCode.IoFailure
+        },
         UnauthorizedAccessException => ErrorCode.AccessDenied,
         FileNotFoundException or DirectoryNotFoundException => ErrorCode.NotFound,
         PathTooLongException or ArgumentException or NotSupportedException => ErrorCode.InvalidInput,

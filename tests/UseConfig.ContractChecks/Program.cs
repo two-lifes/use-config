@@ -1,5 +1,10 @@
 using UseConfig.Catalog;
 
+if (args.Length != 0 && args[0].StartsWith("--storage-", StringComparison.Ordinal))
+{
+    return await StorageWriteChecks.ChildAsync(args);
+}
+
 int passed = 0;
 void Check(bool condition, string name)
 {
@@ -100,6 +105,7 @@ try
     MarkdownCodecChecks.Run((name, action) => { action(); Check(true, name); });
     await CatalogLoadingChecks.RunAsync(Check);
     await CatalogAccessChecks.RunAsync(Check);
+    await StorageWriteChecks.RunAsync(Check);
     Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Includes Markdown catalog and settings adapters.");
     return 0;
 }

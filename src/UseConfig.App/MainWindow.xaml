@@ -23,12 +23,17 @@
                    TextWrapping="Wrap" />
         <TextBlock Margin="0,12,0,0"
                    Foreground="{StaticResource SecondaryTextBrush}"
-                   Text="Markdown files and ZIP backups contain plaintext usernames and passwords. Masking passwords in the app does not encrypt these files."
+                   Text="Markdown files, ZIP backups, and service recovery copies contain plaintext usernames and passwords. Masking passwords in the app does not encrypt these files."
                    TextWrapping="Wrap" />
         <StackPanel x:Name="Actions" Orientation="Horizontal" Margin="0,20,0,0">
             <Button Content="Open catalog" Click="OpenCatalog" />
             <Button Content="Create catalog" Click="CreateCatalog" />
             <Button x:Name="RetryButton" Content="Retry" Click="RetryCatalog" IsEnabled="False" />
+        </StackPanel>
+        <StackPanel x:Name="RecoveryActions" Visibility="Collapsed" Margin="0,12,0,0">
+            <TextBlock Text="An interrupted operation needs recovery. Save the previous version to a separate folder; the current catalog will not be changed." TextWrapping="Wrap" />
+            <ComboBox x:Name="RecoveryOperations" DisplayMemberPath="Label" Margin="0,8,0,8" />
+            <Button Content="Save recovery copy" Click="SaveRecoveryCopy" HorizontalAlignment="Left" />
         </StackPanel>
         <TextBlock Text="Catalog path" Margin="0,20,0,6" />
         <TextBlock x:Name="CatalogPath" Text="No catalog selected." TextWrapping="Wrap" />

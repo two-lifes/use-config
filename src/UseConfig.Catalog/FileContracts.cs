@@ -15,7 +15,7 @@ public sealed record CatalogSnapshot(
     IReadOnlyList<CatalogDocument> Documents,
     IReadOnlyList<Diagnostic> Diagnostics)
 {
-    public bool IsReadOnly => Diagnostics.Count != 0;
+    public bool IsReadOnly => Diagnostics.Any(diagnostic => diagnostic.Code != ErrorCode.RecoveryCleanupFailed);
 }
 
 public abstract record FileChange

@@ -3,10 +3,11 @@ using UseConfig.Catalog;
 
 namespace UseConfig.Storage;
 
-public sealed class MarkdownCatalogLocation(string settingsDirectory) : ICatalogLocation
+public sealed class MarkdownCatalogLocation(string settingsDirectory, MarkdownCatalogFiles? catalogFiles = null) : ICatalogLocation
 {
     private const string Metadata = "---\nformat_version: 1\n---\n";
     private readonly string settingsPath = LocationPaths.Normalize(settingsDirectory);
+    private readonly MarkdownCatalogFiles files = catalogFiles ?? new();
 
     public Task<OperationResult<OpenedCatalog>> OpenAsync(string path, bool create, CancellationToken cancellationToken) =>
         Task.Run(() => Open(path, create, cancellationToken), cancellationToken);
@@ -41,7 +42,11 @@ public sealed class MarkdownCatalogLocation(string settingsDirectory) : ICatalog
                 return Open(root, false, CancellationToken.None);
             }
 
-            return new OperationResult<OpenedCatalog>.Success(MarkdownCatalogReader.Read(root, cancellationToken));
+            var result = files.ReadAsync(root, cancellationToken).GetAwaiter().GetResult();
+            if (result is OperationResult<CatalogSnapshot>.Failure failure) return Fail(failure.Code);
+            var snapshot = ((OperationResult<CatalogSnapshot>.Success)result).Value;
+            var loaded = new MarkdownCatalogValidator().Load(root, snapshot.Documents, snapshot.Diagnostics);
+            return new OperationResult<OpenedCatalog>.Success(new OpenedCatalog(root, loaded.Folders, loaded.Entries, loaded.Diagnostics.Distinct()));
         }
         catch (DecoderFallbackException) { return Fail(ErrorCode.MalformedContent); }
         catch (Exception exception) when (LocationPaths.Classify(exception) is not null)
