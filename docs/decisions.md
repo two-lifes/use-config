@@ -10,6 +10,8 @@ This document records the rationale behind the current plan and distinguishes ex
 
 ## Confirmed by the user
 
+Historical entries retain the choices made at the time. D-21 supersedes D-04 and D-06, and the storage, master-password, locking, draft, and encrypted-backup portions of D-15–D-20 and P-01/P-04/P-06. Unaffected platform, catalog, timer, and release decisions remain current.
+
 | ID | Decision | Rationale and implications |
 |---|---|---|
 | D-01 | Standalone desktop application, initially Windows only | The user preferred desktop to an extension. The application launches the browser on the PC. |
@@ -31,6 +33,20 @@ This document records the rationale behind the current plan and distinguishes ex
 | D-19 | Catalog edge cases and restore policy | The user accepted the remaining decision package: unique folder names, duplicate website names/URLs allowed, one per-user application instance, agreed empty/no-results search behavior, confirmation above 10 sites, continued bulk attempts and failure-only retry, validated replacement with a prior encrypted backup, supported-format migrations, and recoverable old/new states on interrupted operations. |
 | D-20 | Release policy, search measurement, and stage 1 closure | The user accepted a signed per-user x64 MSI with bundled runtime/native dependencies, manual updates preserving data, vault retention on uninstall, and search p95 ≤ 300 ms for 10,000 entries using the method in product.md. Use Config is the working name. Final name, publisher, and certificate are explicitly deferred until before stage 11. The user then instructed implementation of the closure plan and authorized checking 1.1–1.8 and C1 without starting stage 2. |
 
+### D-21 — Plaintext Markdown MVP (confirmed, 2026-10-25)
+
+The user explicitly approved replacing the storage/protection foundation and implementing the documentation revision only:
+
+- Use C# / .NET 10 LTS and WPF with plaintext Markdown files; remove SQLite, SQLCipher, encryption, master passwords, application locking, and master-password changes from the MVP.
+- Let the user choose or create the catalog root and remember its path per Windows user. Use one level of topic directories and one `.md` file per website.
+- Support manual editing according to a documented format. Task 2.2 will define syntax, fields, stable IDs, filenames, versioning, and invalid-file handling; this revision does not choose that syntax.
+- Keep website passwords in plaintext files, while retaining UI masking, 30-second reveal, and conditional 60-second clipboard cleanup. There is no authentication boundary.
+- Replace encrypted exports with unencrypted ZIP backup/restore. Validate before replacement and back up the current catalog first; preserve recoverable state on failures.
+- Replace encrypted drafts and locking flows with Save / Discard / Cancel for unsaved edits. Persistent drafts are outside the MVP.
+- Preserve file integrity and original malformed files, prevent silent overwrites of external changes, and keep entry contents out of logs. No telemetry is added.
+
+This supersedes the earlier storage/protection choices identified above, not their historical approval records. Stage 1 completion and task 2.1 remain recorded; C2 and all revised future tasks stay open. No implementation, dependency installation, commit, or push is authorized by this documentation revision.
+
 ### Workflow decision
 
 **D-13 — Confirmed by the user:** add the `next-task` project chat command. Each explicit invocation selects one unfinished `X.Y` item, executes it, and runs fast checks or expanded stage-completion checks when it is the final item. Then offer documentation completion marks, commit, and push. Invocation authorizes the selected work but does not confirm unresolved product choices or automatically authorize finalization. See [next-task.md](next-task.md). This refines D-08: creating the command remains documentation work; explicitly invoking it authorizes the selected task.
@@ -39,7 +55,7 @@ This document records the rationale behind the current plan and distinguishes ex
 
 ## Former proposals — resolved in stage 1
 
-These IDs are retained for existing references and decision history. They are approved planning decisions, not claims of completed implementation or testing.
+These IDs are retained for existing references and decision history. They record the approved stage 1 choices, not claims of implementation or testing. P-01, P-04, and P-06 are partially superseded by D-21; their historical wording below is retained for traceability.
 
 | ID | Final status | Decision |
 |---|---|---|
@@ -56,9 +72,11 @@ These IDs are retained for existing references and decision history. They are ap
 
 Final application name, actual publisher identity, and signing certificate must be resolved **before stage 11**. Use Config is the working name. Do not invent an identity or treat an unsigned package as a signed release. This deferral was explicitly accepted by the user and does not block C1.
 
-The exact SQLCipher provider/native package selection and technical feasibility checks are implementation tasks 2.2–2.3, not unresolved stage 1 product choices. If verification exposes an incompatibility, record the evidence and revisit the affected technical decision before changing the agreed target.
+Under D-21, task 2.2 now specifies the Markdown format and 2.3 verifies file/ZIP feasibility. SQLCipher provider selection is no longer required. Windows compatibility remains to be verified; report evidence and revisit the affected decision before changing the agreed target.
 
 ## Stage 1 completion
+
+Historical record: the following describes the original stage 1 closure. D-21 later superseded its storage/protection choices; task 2.1 subsequently created and verified the skeleton. This record does not claim verification of the revised Markdown behavior.
 
 On 2026-10-25 the user answered the remaining foundation, draft, and release questions, then explicitly approved implementation of the complete stage 1 closure plan. Tasks 1.1–1.8 and C1 are complete. Product requirements, user stories, design guidance, and tasks reflect D-15–D-20; the task list retains its original flat X.Y structure.
 
