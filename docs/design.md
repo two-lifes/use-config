@@ -2,7 +2,7 @@
 
 A working summary of the attached `DESIGN_SYSTEM.md`. It retains core rules and tokens while omitting repetition, CSS examples, and graphical-editor patterns. This describes the future UI; it does not authorize implementation.
 
-Behavior comes from [product.md](product.md) and [user-stories.md](user-stories.md); decision statuses are in [decisions.md](decisions.md). Priority: user workflow → readability and accessibility → existing patterns → visual rules. The adaptation below targets the proposed WPF stack without changing its approval status.
+Behavior comes from [product.md](product.md) and [user-stories.md](user-stories.md); decision statuses are in [decisions.md](decisions.md). Priority: user workflow → readability and accessibility → existing patterns → visual rules. The adaptation below targets the approved WPF stack.
 
 ## 1. Character and layout
 
@@ -11,6 +11,7 @@ Behavior comes from [product.md](product.md) and [user-stories.md](user-stories.
 - Use a neutral background for selection. Group forms by meaning; replace nested borders with spacing and separators.
 - Panels have predictable dimensions; the working area expands. When space narrows, reduce spacing and secondary areas first; use horizontal scrolling only where content requires it.
 - Use real data and concrete labels. Empty states explain the next action; development fixtures must be clearly identified.
+- Show Description as a labeled multiline field in the entry editor and readable text in details. Keep quick search visible and focusable with Ctrl+F; preserve focus while results update.
 - All application-owned text is English. Preserve user-entered content in its original language.
 
 ## 2. Color tokens
@@ -61,6 +62,7 @@ The source uses CSS pixels; use these as starting values in WPF DIPs and verify 
 - **Buttons:** primary uses an accent fill and dark text; secondary uses a neutral fill and border; ghost is transparent. Destructive actions are normally neutral, with red appropriate in confirmation. Use icons only to aid recognition, from one monochrome set.
 - **Inputs:** external labels are required; placeholders do not replace them. Errors explain the cause and remedy. Passwords are masked by default; product requirements govern reveal and copy behavior.
 - **Lists:** consistent rows, subtle hover, clear selection, restrained separators. Truncated text must have an accessible full value without revealing passwords.
+- **Drafts:** after unlocking, offer to resume the encrypted draft. Manual locking with edits provides Save and lock / Discard and lock / Cancel. A draft-write failure is reported after unlocking and never delays automatic locking.
 - **Dialogs:** reserve for decisions that interrupt work; use inline forms or panels for routine editing. Support Escape, modal focus containment, and focus restoration. Closing must follow the agreed policy for unsaved input.
 - **Hover / pressed:** change tone or border. **Focus:** a visible keyboard outline, initially 2 units wide with a 2-unit offset. **Disabled:** visibly distinct and explained where possible.
 - **Loading:** local indicator. **Empty:** explanation and next action. **Error:** specific message and recovery. **Success:** brief, restrained confirmation.
