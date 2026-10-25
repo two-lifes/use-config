@@ -101,11 +101,15 @@ try
     }
     Check(!new CatalogDocument("synthetic.md", "synthetic-secret").ToString()!.Contains("synthetic-secret"),
         "document default string representation omits contents");
+    MigrationChecks.Run((name, action) => { action(); Check(true, name); });
     await LocationChecks.RunAsync(Check);
     MarkdownCodecChecks.Run((name, action) => { action(); Check(true, name); });
     await CatalogLoadingChecks.RunAsync(Check);
-    await CatalogAccessChecks.RunAsync(Check);
-    if (OperatingSystem.IsWindows()) await StorageWriteChecks.RunAsync(Check);
+    if (OperatingSystem.IsWindows())
+    {
+        await CatalogAccessChecks.RunAsync(Check);
+        await StorageWriteChecks.RunAsync(Check);
+    }
     else throw new PlatformNotSupportedException("Windows file-operation checks require Windows.");
     Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Includes Markdown catalog and settings adapters.");
     return 0;

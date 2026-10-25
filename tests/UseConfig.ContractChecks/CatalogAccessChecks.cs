@@ -1,10 +1,12 @@
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Runtime.Versioning;
 using UseConfig.Catalog;
 using UseConfig.Storage;
 
 internal static class CatalogAccessChecks
 {
+    [SupportedOSPlatform("windows")]
     public static async Task RunAsync(Action<bool, string> check)
     {
         var token = CancellationToken.None;
