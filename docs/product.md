@@ -1,6 +1,6 @@
 # MVP: Local Website and Credentials Catalog for Windows
 
-Status: approved MVP requirements revised for plaintext Markdown storage (D-21). Stages 1 and 2 and tasks 3.1–3.7 are complete, including production catalog opening/validation, safe writes/recovery and migration preparation. Only v1 is supported; no production version transitions are registered. The [technical foundation](technical-foundation.md#task-37-migration-preparation-repair-2026-10-26) records the implemented boundary and verified repair. Task 3.8 is next; C3 remains open.
+Status: approved MVP requirements revised for plaintext Markdown storage (D-21). Stages 1–3 and C3 are complete, including production catalog opening/validation, safe writes/recovery, migration preparation and the stage 3 verification matrix. Only v1 is supported; no production version transitions are registered. The [technical foundation](technical-foundation.md#task-38-final-verification-2026-10-26) records verification and its limits: insufficient space was injected; real disk exhaustion, power loss and minimum Windows versions remain unverified. Task 4.1 is next and requires a separate instruction.
 
 ## 1. Purpose and scope
 
@@ -83,7 +83,7 @@ Tens of thousands of users do not require server infrastructure for this product
 
 ## 5. Verification and completion criteria
 
-Each task is subject to the user-mandated shared limit of five minutes and five verification command invocations, including retries and all build/test/smoke checks. Stop at either limit and report missing evidence; do not weaken acceptance criteria or claim omitted checks passed. See [build.md](build.md#mandatory-verification-budget).
+D-25 removes the total-duration and command-count verification limits. Run checks appropriate to the task and checkpoint; do not weaken acceptance criteria or claim omitted checks passed. See [build.md](build.md#verification-policy).
 
 The MVP is complete when the following have been verified:
 

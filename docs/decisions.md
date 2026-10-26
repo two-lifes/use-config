@@ -71,6 +71,12 @@ After verifying the incremental empty-catalog implementation, the user requested
 
 **D-14 — Confirmed by the user (2026-10-25):** the explicit `next-task` invocation satisfies task 1.1. The user approved its completion mark and an initial documentation commit and push. The user also requested a single pass through all of stage 1 provided it needs no code changes. This authorizes stage 1 documentation and decision preparation together, without starting stage 2 or silently accepting P-01–P-08.
 
+### D-25 — Verification limits removed; stage 3 failure testing (confirmed, 2026-10-26)
+
+The user explicitly removed the five-minute total-duration and ten-command verification limits while planning task 3.8, then authorized implementation of that plan. This supersedes the verification-budget portions of D-23 and D-24; historical results remain unchanged. Checks still need to establish the selected task and checkpoint, and unverified outcomes must remain explicit.
+
+For task 3.8, the user selected deterministic fault injection for insufficient-space scenarios rather than a full test volume. Real disk exhaustion remains unverified. Actual child-process termination and synthetic Windows ACL checks remain in scope. The initial implementation instruction did not authorize completion marks, commits or pushes. After successful final verification, the user separately approved closing 3.8/C3, updating documentation, committing and pushing to origin/work on 2026-10-26. Stage 4 remains unauthorized.
+
 ## Former proposals — resolved in stage 1
 
 These IDs are retained for existing references and decision history. They record the approved stage 1 choices, not claims of implementation or testing. P-01, P-04, and P-06 are partially superseded by D-21; their historical wording below is retained for traceability.

@@ -6,9 +6,9 @@ Use Windows x64, PowerShell, and the exact .NET SDK **10.0.402** selected by [gl
 
 Package restoration uses the public NuGet feed at `https://api.nuget.org/v3/index.json`. Initial restoration requires network access. Run on a local NTFS volume for the Windows file-sharing and hard-link scenarios. Restricted sandboxes may block MSBuild named pipes or native file operations; report these failures and run in an authorized Windows host environment where necessary.
 
-## Mandatory verification budget
+## Verification policy
 
-The user prohibits prolonged verification. The entire task has a shared maximum of **5 minutes and 10 verification command invocations**, including builds, formatting, tests, smoke checks and retries. Stop at whichever limit comes first; do not reset the budget between items or evade it by splitting/wrapping commands. Use a time-bounded runner and terminate its child processes when the remaining time expires. Report omitted checks rather than claiming success. This overrides exhaustive stage-review requirements.
+The user removed the total-duration and command-count verification limits on 2026-10-26 (D-25). Run the checks required for the task and checkpoint, including relevant retries. Keep individual process waits bounded and terminate only test-owned child processes on timeout. Report omitted checks rather than claiming success. Historical records below retain the budgets that applied at the time.
 
 ## One verification command
 

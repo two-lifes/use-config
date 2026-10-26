@@ -55,7 +55,7 @@ internal sealed class RecoveryJournal : IDisposable
     private readonly List<NativeCatalogFile> owned = [];
     private readonly byte[] manifestBytes;
 
-    internal RecoveryJournal(RecoveryLease lease, CatalogImage image)
+    internal RecoveryJournal(RecoveryLease lease, CatalogImage image, Action<string>? checkpoint = null)
     {
         var name = Guid.NewGuid().ToString("N");
         Folder = Path.Combine(lease.Container, name);
@@ -67,18 +67,19 @@ internal sealed class RecoveryJournal : IDisposable
             var directories = image.Stamps.Where(pair => !image.Files.ContainsKey(pair.Key)).Select(pair =>
                 new RecoveryDirectory(pair.Key, pair.Value.Volume, pair.Value.Id)).ToArray();
             Manifest = new RecoveryManifest(1, image.Root, image.Stamps[""].Volume, image.Stamps[""].Id, files, directories);
-            for (var index = 0; index < files.Length; index++) Create($"backup-{index:D8}", image.Files[files[index].Path]);
+            for (var index = 0; index < files.Length; index++)
+                Create($"backup-{index:D8}", image.Files[files[index].Path], () => checkpoint?.Invoke("journal-backup-partial"));
             manifestBytes = JsonSerializer.SerializeToUtf8Bytes(Manifest);
-            Create("manifest.json", manifestBytes);
+            Create("manifest.json", manifestBytes, () => checkpoint?.Invoke("journal-manifest-partial"));
         }
         catch { Dispose(); throw; }
     }
 
-    private void Create(string name, byte[] bytes)
+    private void Create(string name, byte[] bytes, Action? partial = null)
     {
         var file = NativeCatalogFile.Create(Directory, name, false);
         owned.Add(file);
-        file.Write(bytes);
+        file.Write(bytes, partial);
     }
     internal string HeldFile(string path) => $"held-{Array.FindIndex(Manifest.Files, item => item.Path.Equals(path, StringComparison.OrdinalIgnoreCase)):D8}";
     internal string HeldDirectory(string path) => $"held-dir-{Array.FindIndex(Manifest.Directories, item => item.Path.Equals(path, StringComparison.OrdinalIgnoreCase)):D8}";
@@ -99,7 +100,7 @@ internal static class CatalogRecoveryStore
         return Path.Combine(parent.FullName, ".useconfig-recovery-" + Hash(Encoding.UTF8.GetBytes(root.ToUpperInvariant())));
     }
 
-    internal static IReadOnlyList<RecoveryData> Scan(RecoveryLease lease, string root, List<Diagnostic> diagnostics)
+    internal static IReadOnlyList<RecoveryData> Scan(RecoveryLease lease, string root, List<Diagnostic> diagnostics, Action<string>? checkpoint = null)
     {
         var pending = new List<RecoveryData>();
         if (!lease.Exists) return pending;
@@ -117,7 +118,7 @@ internal static class CatalogRecoveryStore
             {
                 if (completed)
                 {
-                    try { CleanupCompleted(path, root); }
+                    try { CleanupCompleted(path, root, checkpoint); }
                     catch (Exception exception) when (LocationPaths.Classify(exception) is not null || exception is JsonException)
                     { diagnostics.Add(new Diagnostic(ErrorCode.RecoveryCleanupFailed)); }
                     continue;
@@ -130,7 +131,7 @@ internal static class CatalogRecoveryStore
                     {
                         using (var directory = NativeCatalogFile.Open(path, true, delete: true))
                             directory.Rename(lease.Pins.Pin(lease.Container), name + ".complete");
-                        CleanupCompleted(path + ".complete", root);
+                        CleanupCompleted(path + ".complete", root, checkpoint);
                     }
                     catch (Exception exception) when (LocationPaths.Classify(exception) is not null)
                     {
@@ -147,7 +148,7 @@ internal static class CatalogRecoveryStore
         return pending;
     }
 
-    private static void CleanupCompleted(string folder, string root)
+    private static void CleanupCompleted(string folder, string root, Action<string>? checkpoint)
     {
         // The terminal directory name survives partial cleanup. Keep the manifest until all data is gone.
         if (!File.Exists(Path.Combine(folder, "manifest.json")))
@@ -162,7 +163,7 @@ internal static class CatalogRecoveryStore
         var manifest = JsonSerializer.Deserialize<RecoveryManifest>(bytes) ?? throw new CatalogFault(ErrorCode.MalformedContent);
         if (manifest.Version != 1 || manifest.Root != root || manifest.Files is null || manifest.Directories is null)
             throw new CatalogFault(ErrorCode.MalformedContent);
-        Cleanup(new RecoveryData(folder, Hash(bytes), manifest, [], true));
+        Cleanup(new RecoveryData(folder, Hash(bytes), manifest, [], true), checkpoint);
     }
 
     internal static RecoveryData Read(string folder, string root)
@@ -226,7 +227,7 @@ internal static class CatalogRecoveryStore
         finally { foreach (var file in held) file.Dispose(); }
     }
 
-    internal static void Cleanup(RecoveryData data)
+    internal static void Cleanup(RecoveryData data, Action<string>? checkpoint = null)
     {
         // No recursive path deletion: every permitted child is checked and deleted through its own handle.
         using var directory = NativeCatalogFile.Open(data.Folder, true, delete: true);
@@ -266,7 +267,12 @@ internal static class CatalogRecoveryStore
                 }
             }
             // Verify every child before starting cleanup, leaving unknown files untouched.
-            foreach (var child in children) { child.Delete(); child.Dispose(); }
+            foreach (var child in children)
+            {
+                child.Delete();
+                child.Dispose();
+                checkpoint?.Invoke("cleanup-child-deleted");
+            }
             children.Clear();
             directory.Delete();
         }
@@ -281,7 +287,7 @@ internal static class CatalogRecoveryStore
         return index;
     }
 
-    internal static string SaveCopy(RecoveryData data, string parent, string root, CancellationToken cancellationToken)
+    internal static string SaveCopy(RecoveryData data, string parent, string root, CancellationToken cancellationToken, Action<string>? checkpoint = null)
     {
         if (LocationPaths.Overlaps(parent, root) || LocationPaths.Overlaps(parent, Path.GetDirectoryName(data.Folder)!))
             throw new CatalogFault(ErrorCode.InvalidInput);
@@ -305,7 +311,7 @@ internal static class CatalogRecoveryStore
                 cancellationToken.ThrowIfCancellationRequested();
                 var file = NativeCatalogFile.Create(directories[CatalogTree.ParentPath(pair.Key)], CatalogTree.Leaf(pair.Key), false);
                 files.Add(file);
-                file.Write(pair.Value);
+                file.Write(pair.Value, () => checkpoint?.Invoke("recovery-copy-partial"));
             }
             cancellationToken.ThrowIfCancellationRequested();
             // Validate through retained handles: reopening would conflict with our exclusive creation handles.

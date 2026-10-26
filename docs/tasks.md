@@ -8,7 +8,7 @@ Sources: [product.md](product.md), [US-01–US-10](user-stories.md), [decision s
 
 ## Maintaining this plan
 
-- User-mandated verification cap: at most **5 minutes total and 10 verification command invocations per task**, including retries, builds, formatting and smoke checks. A multi-item request shares this budget. Stop at either limit without resetting or bypassing it; report unverified work and leave unsupported checkmarks open. This takes precedence over exhaustive checkpoint reviews.
+- D-25 removes the total-duration and command-count verification limits. Run the checks required for the selected item and checkpoint; report unverified work and leave unsupported checkmarks open. Historical budget records remain unchanged.
 
 - Invoke `$next-task` (or send `next-task` as a chat command) to execute one numbered item using the [next-task skill](../.agents/skills/next-task/SKILL.md). Completion marks, commit, and push are proposed after execution and verification; creating the workflow does not start development.
 
@@ -69,9 +69,11 @@ Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundat
 - [x] 3.5. Validate catalog structure and files; report malformed or unsupported content without rewriting the original files or logging entry contents.
 - [x] 3.6. Implement safe writes and external-change conflict detection; preserve the previous saved state on failures and never silently overwrite external edits.
 - [x] 3.7. Prepare format versioning and supported migrations with a backup before changes; do not modify unsupported formats.
-- [ ] 3.8. Test directory creation/reopening, canceled selection, missing paths, Unicode, multiline fields, malformed files, unsupported versions, external edits, denied access, insufficient space, and interrupted writes.
+- [x] 3.8. Test directory creation/reopening, canceled selection, missing paths, Unicode, multiline fields, malformed files, unsupported versions, external edits, denied access, insufficient space, and interrupted writes.
 
-- [ ] **Checkpoint C3:** US-01 and the storage foundations of US-09 are verified; saved state survives restarts and tested write failures, and invalid files are preserved.
+- [x] **Checkpoint C3:** US-01 and the storage foundations of US-09 are verified; saved state survives restarts and tested write failures, and invalid files are preserved.
+
+Stage 3 completion (2026-10-26, user-authorized): Windows 10.0.26200.0 x64 / NTFS, SDK 10.0.402. Debug/Release builds and all formatting checks passed; each configuration passed 96 prototype scenarios and 263 contract checks. Windows UI creation/cancellation, remembered reopening, missing-path Retry, separate-copy recovery and normal closure passed; original settings were restored byte-for-byte. Insufficient-space failures used injection by user choice. Physical disk exhaustion, power loss and minimum Windows versions remain unverified. See [final verification](technical-foundation.md#task-38-final-verification-2026-10-26). Task 4.1 has not started.
 
 Task 3.1 verification (2026-10-25, Windows x64): the Debug solution build passed with zero warnings/errors, and all 20 contract checks passed, including nine model checks. Solution and contract-project formatting checks passed outside the sandbox after sandbox MSBuild pipe access failures. See the [model verification record](technical-foundation.md#task-31-models-and-verification). Production storage, tasks 3.2–3.8 and C3 remain open.
 

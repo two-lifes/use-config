@@ -31,7 +31,7 @@ public sealed class MarkdownCatalogFiles : ICatalogFiles, ICatalogRecovery
             throw new CatalogFault(ErrorCode.ReadOnly);
         using var lease = new RecoveryLease(root, false);
         var diagnostics = new List<Diagnostic>();
-        CatalogRecoveryStore.Scan(lease, root, diagnostics);
+        CatalogRecoveryStore.Scan(lease, root, diagnostics, checkpoint);
         if (diagnostics.Any(item => item.Code == ErrorCode.RecoveryRequired)) throw new CatalogFault(ErrorCode.RecoveryRequired);
         using var tree = new CatalogTree(root, null, cancellationToken);
         var current = tree.Capture();
@@ -52,7 +52,7 @@ public sealed class MarkdownCatalogFiles : ICatalogFiles, ICatalogRecovery
         var root = LocationPaths.Normalize(rootPath);
         using var lease = new RecoveryLease(root, false);
         var diagnostics = new List<Diagnostic>();
-        var pending = CatalogRecoveryStore.Scan(lease, root, diagnostics);
+        var pending = CatalogRecoveryStore.Scan(lease, root, diagnostics, checkpoint);
         if (pending.Count == 0 && diagnostics.Any(item => item.Code == ErrorCode.RecoveryRequired))
             throw new CatalogFault(ErrorCode.MalformedContent);
         return (IReadOnlyList<RecoveryOperation>)Array.AsReadOnly(pending.Select(data =>
@@ -73,7 +73,7 @@ public sealed class MarkdownCatalogFiles : ICatalogFiles, ICatalogRecovery
         var data = CatalogRecoveryStore.Read(receipt.Folder, root);
         if (data.Complete || data.ManifestHash != receipt.ManifestHash) throw new CatalogFault(ErrorCode.Conflict);
         cancellationToken.ThrowIfCancellationRequested();
-        return CatalogRecoveryStore.SaveCopy(data, LocationPaths.Normalize(destinationParent), root, cancellationToken);
+        return CatalogRecoveryStore.SaveCopy(data, LocationPaths.Normalize(destinationParent), root, cancellationToken, checkpoint);
     }, cancellationToken);
 
     private async Task<OperationResult<T>> Run<T>(Func<T> operation, CancellationToken cancellationToken)
@@ -98,7 +98,7 @@ public sealed class MarkdownCatalogFiles : ICatalogFiles, ICatalogRecovery
         using var tree = new CatalogTree(root, null, cancellationToken);
         var image = tree.Capture();
         using var lease = new RecoveryLease(root, false);
-        CatalogRecoveryStore.Scan(lease, root, image.Diagnostics);
+        CatalogRecoveryStore.Scan(lease, root, image.Diagnostics, checkpoint);
         var revision = new CatalogRevision();
         revisions.Add(revision, image);
         return new CatalogSnapshot(revision, image.Documents, Array.AsReadOnly(image.Diagnostics.ToArray()));
@@ -114,7 +114,7 @@ public sealed class MarkdownCatalogFiles : ICatalogFiles, ICatalogRecovery
         using (var lease = new RecoveryLease(root, true))
         {
             var diagnostics = new List<Diagnostic>();
-            CatalogRecoveryStore.Scan(lease, root, diagnostics);
+            CatalogRecoveryStore.Scan(lease, root, diagnostics, checkpoint);
             if (diagnostics.Any(item => item.Code == ErrorCode.RecoveryRequired)) throw new CatalogFault(ErrorCode.RecoveryRequired);
             using var tree = new CatalogTree(root, plan, cancellationToken);
             var current = tree.Capture();
@@ -122,7 +122,7 @@ public sealed class MarkdownCatalogFiles : ICatalogFiles, ICatalogRecovery
             if (current.Diagnostics.Count != 0) throw new CatalogFault(ErrorCode.ReadOnly);
             checkpoint?.Invoke("locked");
             cancellationToken.ThrowIfCancellationRequested();
-            using var journal = new RecoveryJournal(lease, current);
+            using var journal = new RecoveryJournal(lease, current, checkpoint);
             var undo = new Stack<Action>();
             var detached = new HashSet<NativeCatalogFile>();
             var started = false;
@@ -157,13 +157,14 @@ public sealed class MarkdownCatalogFiles : ICatalogFiles, ICatalogRecovery
                             {
                                 var path = replace.Document.RelativePath;
                                 var file = tree.Files[path];
-                                undo.Push(() => file.Write(original.Files[path]));
+                                undo.Push(() => file.Write(original.Files[path], () => checkpoint?.Invoke("rollback-partial")));
                                 file.Write(plan.ResultFiles[path], () => checkpoint?.Invoke("partial"));
                                 break;
                             }
                         case FileChange.Move move: Relocate(move.Source, move.Destination); break;
                         case FileChange.Delete delete: Relocate(delete.RelativePath, null); break;
                     }
+                    checkpoint?.Invoke("operation-applied");
                 }
                 checkpoint?.Invoke("written");
                 var result = tree.Capture();

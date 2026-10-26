@@ -1,6 +1,50 @@
 # Technical foundation contracts
 
-Tasks 2.5–2.6 define contracts and policy. The interfaces live in [UseConfig.Catalog](../src/UseConfig.Catalog/UseConfig.Catalog.csproj), which has no WPF or storage dependency. Storage and Windows integration implement these ports; App composes them. The isolated storage prototype remains experimental. The user approved completion marks for 2.5, 2.6 and C2 on 2026-10-25. Stage 3 now includes completed tasks 3.1–3.6; C3 remains open. Historical incremental results below are retained for traceability.
+## Task 3.8 implementation and interrupted verification (2026-10-26)
+
+At the start of this attempt, task 3.8 and C3 remained open. The user authorized the plan, removed verification duration/count limits (D-25), and selected injected insufficient-space failures rather than a full test volume. The interrupted-attempt record is preserved below; final verification and subsequent closure supersede its pending status.
+
+[StorageFailureChecks](../tests/UseConfig.ContractChecks/StorageFailureChecks.cs) adds 60 checks without new dependencies. Internal optional checkpoints cover partial journal backups/manifests, individual applied operations, partial rollback, deleted cleanup children and partial separate-copy recovery. Public interfaces and storage formats are unchanged. Unfinished journals are not automatically deleted.
+
+| Requirement | Added coverage |
+| --- | --- |
+| Save and reopen | Mixed create/replace/move/delete batch compared with an independent expected path/byte tree; fresh-process restoration of the remembered path, every entry field, IDs, relationships and empty topics. |
+| Malformed / unsupported | Whole-tree preservation after malformed metadata, unsupported versions, unknown files and duplicate IDs. Existing codec/model/migration checks remain enabled. |
+| External edits | Whole-tree preservation after edit, rename, move or deletion; stale writes do not recreate files. |
+| Access denial | Real synthetic Windows ACL denial of entry writes and service-directory creation; exact DACL restoration and successful subsequent writes. |
+| Insufficient space | Injected IOException HRESULT codes 112/39 during preparation and writes; failed rollback and partial recovery retain a recoverable previous version without returning false success. No real volume exhaustion. |
+| Process interruption | Termination during partial backup/manifest preparation, after five mixed-operation boundaries and at three cleanup positions. Complete previous trees are recoverable; cleanup preserves committed state and resumes. |
+| Incomplete preparation | Source bytes remain unchanged; opening reports RecoveryRequired and incomplete journals are not offered as valid recovery copies. No automatic repair is introduced. |
+
+Verification on Windows 10.0.26200.0 x64, SDK 10.0.402:
+
+- The first `scripts/verify.ps1` run passed Debug/Release builds without warnings/errors, formatting on all three targets and the Debug prototype suite. It stopped in Debug contract checks after 219 passes with InvalidOperationException; the runner initially did not print the failing assertion name. Release executable suites were not reached.
+- Fixed-label assertion/category diagnostics were added. The focused Debug rerun passed **263 checks, 0 failures**, including all 60 additions. The first failure did not recur. A missing post-termination wait before recovery discovery was then aligned with the existing bounded Windows handle-release wait; this likely timing gap is not a conclusively captured diagnosis of the original exception. The final wait change and child timeout cleanup were formatted successfully but have not been rebuilt or rerun. Final full verification remains required.
+- The skill validator could not start in either system or bundled Python because PyYAML is absent; no packages were installed. The narrow edit preserves skill frontmatter, explicit invocation and finalization rules. Automated skill validation remains unavailable.
+- UI preparation found no existing app instance, saved original settings bytes and installed temporary settings with no selected catalog. The first launch attempt omitted the runtime output subdirectory and failed; the corrected Debug executable opened. Accessibility showed the English initial state, plaintext explanation and selection buttons. The screenshot did not match that accessibility state, so no visual verification is claimed.
+- The user stopped Computer Use with physical Escape before the first picker interaction. No further UI input was sent. The single task-owned app process was terminated for cleanup; original settings were restored and compared byte-for-byte. Normal UI shutdown, creation, cancellation, restart, Retry and recovery were **not verified in this task**. Historical UI results remain separate evidence.
+
+The remaining build/runtime/UI work from this interrupted attempt was completed in the authorized continuation below. Minimum Windows versions, physical disk exhaustion and power loss remain unverified. Stage 4 was not started.
+
+### Task 3.8 final verification (2026-10-26)
+
+The user explicitly requested continuation of verification. The final code, including bounded post-termination handle-release waiting and child timeout cleanup, passed `scripts/verify.ps1` on Windows 10.0.26200.0 x64 / NTFS with SDK 10.0.402. Solution, prototype and contract projects built in Debug and Release with zero warnings/errors; all three formatting checks passed outside the sandbox. **Each configuration passed 96 prototype scenarios and 263 contract checks**, with zero failures. The earlier 219-check failure did not recur in either configuration. No application or test source was changed during this continuation.
+
+The Windows WPF UI was exercised using separate synthetic catalogs and temporarily isolated settings:
+
+- Create catalog initialized an empty directory, displayed zero folders/websites and persisted its path. Canceling both Open catalog and Create catalog retained the selection; settings and catalog bytes and last-write timestamps were unchanged.
+- Open catalog loaded four topics and three Unicode entries. Normal closure followed by a new application process automatically reopened that remembered catalog without authentication.
+- Temporarily moving only the synthetic catalog made Retry show the missing-directory error while retaining the loaded records and remembered path. The application did not recreate the missing directory. Restoring it and choosing Retry loaded the original four topics and three entries again.
+- A test-owned child process was terminated at the `prepared` checkpoint. On startup, the WPF window displayed read-only status, the recovery choice and plaintext explanation. Canceling the recovery picker created no output and preserved the source. Choosing an external synthetic destination saved a separate recovery copy without changing the active selection. Filesystem verification found the same eight file paths/hashes and four topic directories in the source and recovery copy.
+- All test WPF instances were closed normally through the UI; absence of their windows/processes was checked. The user's original settings were restored and compared byte-for-byte. Newly created test settings backups were moved into the ignored fixture directory, not left in the user's settings directory.
+
+Native picker accessibility indices/value setting were unreliable in one attempt; observed keyboard navigation and screenshot coordinates completed the flows. The application's English text and plaintext explanation were visually confirmed; native picker controls follow the host Windows language. This was functional verification, not stage 10 layout/accessibility acceptance.
+
+The final diff was reviewed; no public API/schema changes, new dependencies, disabled assertions or unrelated refactoring were introduced. Scope remains stage 3 storage foundations, not editor conflict prompts, real version conversions, ZIP operations or stage 4. Physical disk exhaustion remains untested by the user's explicit choice; the insufficient-space evidence is fault injection. Minimum supported Windows versions and power-loss behavior are not certified. The optional Python skill validator remains unavailable because PyYAML is absent; the unchanged frontmatter, local links and narrow workflow edit were reviewed without installing packages.
+
+After reviewing these results, the user explicitly approved marking task 3.8 and C3 complete, updating the project status, committing the related changes and pushing to origin/work on 2026-10-26. Their checkboxes are now closed on the tested scope above. This approval does not start task 4.1.
+
+Tasks 2.5–2.6 define contracts and policy. The interfaces live in [UseConfig.Catalog](../src/UseConfig.Catalog/UseConfig.Catalog.csproj), which has no WPF or storage dependency. Storage and Windows integration implement these ports; App composes them. The isolated storage prototype remains experimental. The user approved completion marks for 2.5, 2.6 and C2 on 2026-10-25. Stage 3 tasks 3.1–3.8 and C3 are complete with the limits recorded above. Historical incremental results below are retained for traceability.
 
 ## Task 3.3 implementation and verification
 
@@ -88,7 +132,7 @@ Use one bounded local log with rotation at 1 MiB and at most three retained file
 
 [ContractChecks](../tests/UseConfig.ContractChecks/UseConfig.ContractChecks.csproj) is a dependency-free executable exercising interface substitution, controlled deadlines, cancellation, ownership, revision conflicts and read-only error transport using in-memory doubles. Task 3.2 adds real empty-catalog and settings file checks on synthetic data. It does not verify native clipboard behavior, general catalog mutations, ZIP restoration or production timer orchestration. Existing file/ZIP prototype evidence remains in [storage-prototype.md](storage-prototype.md).
 
-The user's verification budget applies to the entire task: **at most five minutes total and ten verification command invocations**, including retries, builds, formatting, tests and smoke checks. Do not split commands or restart the budget to evade it. Stop at either limit, report unverified checks and leave unsupported completion claims open. See [build.md](build.md).
+D-25 removes the total-duration and command-count verification limits. Run the checks required for the task and checkpoint, report unverified checks and leave unsupported completion claims open. See [build.md](build.md#verification-policy). Earlier verification records retain their historical budgets.
 
 ### Current verification status (2026-10-25)
 

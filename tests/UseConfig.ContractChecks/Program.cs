@@ -1,5 +1,10 @@
 using UseConfig.Catalog;
 
+if (args.Length != 0 && args[0].StartsWith("--stage3-", StringComparison.Ordinal))
+{
+    return await StorageFailureChecks.ChildAsync(args);
+}
+
 if (args.Length != 0 && args[0].StartsWith("--storage-", StringComparison.Ordinal))
 {
     return await StorageWriteChecks.ChildAsync(args);
@@ -8,7 +13,11 @@ if (args.Length != 0 && args[0].StartsWith("--storage-", StringComparison.Ordina
 int passed = 0;
 void Check(bool condition, string name)
 {
-    if (!condition) throw new InvalidOperationException(name);
+    if (!condition)
+    {
+        Console.Error.WriteLine("FAIL: " + name);
+        throw new InvalidOperationException(name);
+    }
     passed++;
     Console.WriteLine($"PASS: {name}");
 }
@@ -109,6 +118,7 @@ try
         await MigrationChecks.RunAsync(Check);
         await CatalogAccessChecks.RunAsync(Check);
         await StorageWriteChecks.RunAsync(Check);
+        await StorageFailureChecks.RunAsync(Check);
     }
     else throw new PlatformNotSupportedException("Windows file-operation checks require Windows.");
     Console.WriteLine($"Contract checks: {passed} passed, 0 failed. Includes Markdown catalog and settings adapters.");
