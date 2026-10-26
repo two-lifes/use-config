@@ -1,6 +1,6 @@
 # MVP Implementation Sequence
 
-Status: stages 1–3 and C3 are complete. Task 4.1 is complete by explicit user instruction on 2026-10-26, with the remaining UI verification limits recorded in the [theme verification record](technical-foundation.md#task-41-shared-wpf-resources-and-closure-2026-10-26). Task 4.2 is next and requires a separate instruction; C4 remains open. Only v1 is supported; the production migration registry has no transitions.
+Status: stages 1–3 and C3 are complete. Task 4.1 is complete by explicit user instruction on 2026-10-26, with the remaining UI verification limits recorded in the [theme verification record](technical-foundation.md#task-41-shared-wpf-resources-and-closure-2026-10-26). Task 4.2 is complete with user-confirmed manual picker creation/opening and restart checks on 2026-10-26; see the [catalog flow verification](technical-foundation.md#task-42-catalog-flows-and-closure-2026-10-26). Its scrollable layout resolves the previously recorded recovery clipping in the tested window sizes. Task 4.3 is next and requires a separate instruction; C4 remains open. Only v1 is supported; the production migration registry has no transitions.
 
 Revision (2026-10-25, D-21): current requirements use plaintext Markdown and ZIP backups. Stage 1 checkmarks and its completion record are historical; superseded storage/protection choices below are not current requirements. Task 2.1 remains complete. No revised task or checkpoint is completed by this documentation update.
 
@@ -86,7 +86,7 @@ Task 3.7 repair verification (2026-10-26, Windows x64 / SDK 10.0.402): Debug sol
 Dependency: C3 and decisions about layout and repeated launches. Rules: `design.md`.
 
 - [x] 4.1. Create shared WPF resources for the palette, typography, dimensions, spacing, and control styles in the concise design system.
-- [ ] 4.2. Build catalog directory selection/creation and reopening flows with local loading indicators and clear errors, using English text.
+- [x] 4.2. Build catalog directory selection/creation and reopening flows with local loading indicators and clear errors, using English text.
 - [ ] 4.3. Build the main window: folders, website list, and details, with a multiline Description field, Ctrl+F quick search, and Save / Discard / Cancel prompts for unsaved edits.
 - [ ] 4.4. Prepare shared inputs, buttons, lists, confirmations, and hover/focus/disabled/loading/empty/error states.
 - [ ] 4.5. Implement agreed repeated-launch behavior without allowing inconsistent writes to the same catalog.

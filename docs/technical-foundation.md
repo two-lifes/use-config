@@ -1,5 +1,22 @@
 # Technical foundation contracts
 
+## Task 4.2 catalog flows and closure (2026-10-26)
+
+[MainWindow.xaml](../src/UseConfig.App/MainWindow.xaml) separates catalog selection from the opened catalog view. [CatalogFlow.cs](../src/UseConfig.App/CatalogFlow.cs) coordinates opening, creation, remembered reopening, retry targets, read-only diagnostics and recovery. It blocks competing operations while busy; picker cancellation retains the current state. The window restores focus after cancellation and uses local progress feedback and vertically scrollable content, including long status messages. Public storage contracts and the Markdown format are unchanged; no dependencies were added.
+
+Verification on Windows x64 with SDK 10.0.402:
+
+- Debug builds of the solution and contract-check project passed without warnings or errors. Sandbox builds failed without actionable diagnostics; builds outside the sandbox passed.
+- All 289 contract checks passed, including 26 new flow checks in [CatalogFlowChecks.cs](../tests/UseConfig.ContractChecks/CatalogFlowChecks.cs). These cover cancellation, navigation, failed-target Retry, settings rereading, read-only handling, persistence errors and concurrency during opening/recovery.
+- Solution and contract-project formatting checks passed outside the sandbox after correcting one whitespace finding. `git diff --check` passed.
+- An isolated temporary WPF host under ignored `bin/` passed 17 native checks at the existing 200% system scale. Production catalog/settings adapters exercised creation, reopening and missing-path Retry on synthetic data. Controlled adapter delays verified visible loading and disabled actions; synthetic recovery adapters verified recovery presentation and operation states. Tests covered focus, long paths/messages, 960x600 and 480x320 DIP layouts, scrolling to the bottom action and automatic host shutdown. This is UI evidence, not a new verification of production recovery-copy storage.
+- Desktop inspection verified startup/recovery presentation, keyboard navigation, and cancellation of both open/create dialogs with focus restoration. The automation tool twice failed to target the folder field, so confirmation through the system picker was initially left unverified.
+- The user subsequently confirmed the manual checks: Create catalog into an empty test folder, Open catalog through the system picker, and automatic reopening after closing and restarting the application. This closes the missing picker-confirmation check; it is user-reported evidence.
+
+The tested scrollable layout resolves the recovery clipping recorded in 4.1, including long success messages in a small window. Other display scales, the full supported-Windows matrix and Release were not checked for 4.2. The automated host used isolated settings and synthetic data; the user's manual procedure remembers their chosen test catalog.
+
+The user explicitly authorized completion marks, commit and push on 2026-10-26. Task 4.2 is closed; C4 remains open, and task 4.3 has not started. Earlier records below describe historical task states.
+
 ## Task 4.1 shared WPF resources and closure (2026-10-26)
 
 [Theme.xaml](../src/UseConfig.App/Resources/Theme.xaml) centralizes the design palette, Segoe UI/Consolas typography, dimensions, spacing, radii, text styles, primary/secondary/ghost buttons, the non-editable recovery ComboBox and scrollbar styles. [App.xaml](../src/UseConfig.App/App.xaml) merges the dictionary; [MainWindow.xaml](../src/UseConfig.App/MainWindow.xaml) uses these resources without changing catalog handlers or contracts. Hover, pressed, keyboard focus and disabled states are static; no dependencies or animations were added. The scrollbar intersection uses a scoped system-brush override to avoid a light corner.

@@ -111,6 +111,7 @@ try
     Check(!new CatalogDocument("synthetic.md", "synthetic-secret").ToString()!.Contains("synthetic-secret"),
         "document default string representation omits contents");
     await LocationChecks.RunAsync(Check);
+    await CatalogFlowChecks.RunAsync(Check);
     MarkdownCodecChecks.Run((name, action) => { action(); Check(true, name); });
     await CatalogLoadingChecks.RunAsync(Check);
     if (OperatingSystem.IsWindows())
