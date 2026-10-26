@@ -1,6 +1,6 @@
 # MVP: Local Website and Credentials Catalog for Windows
 
-Status: approved MVP requirements revised for plaintext Markdown storage (D-21). Stages 1–3 and C3 are complete, including production catalog opening/validation, safe writes/recovery, migration preparation and the stage 3 verification matrix. Only v1 is supported; no production version transitions are registered. The [technical foundation](technical-foundation.md#task-38-final-verification-2026-10-26) records verification and its limits: insufficient space was injected; real disk exhaustion, power loss and minimum Windows versions remain unverified. Task 4.1 is next and requires a separate instruction.
+Status: approved MVP requirements revised for plaintext Markdown storage (D-21). Stages 1–3 and C3 are complete, including production catalog opening/validation, safe writes/recovery, migration preparation and the stage 3 verification matrix. Only v1 is supported; no production version transitions are registered. The [technical foundation](technical-foundation.md#task-38-final-verification-2026-10-26) records verification and its limits: insufficient space was injected; real disk exhaustion, power loss and minimum Windows versions remain unverified. Task 4.1 is complete by explicit user instruction, with native 100% scaling and recovery-layout limitations retained in the [theme verification record](technical-foundation.md#task-41-shared-wpf-resources-and-closure-2026-10-26). Task 4.2 is next and requires a separate instruction; C4 remains open.
 
 ## 1. Purpose and scope
 

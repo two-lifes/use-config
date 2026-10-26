@@ -1,6 +1,6 @@
 # MVP Implementation Sequence
 
-Status: stages 1 and 2 are complete. Stage 3 tasks 3.1–3.7 are complete: models, catalog selection/persistence, plaintext explanation, Markdown parsing/validation, safe writes/recovery, and version/migration preparation. Task 3.7 was reopened after review and closed only after the verified repair on 2026-10-26, as explicitly requested by the user. Only v1 is supported; the production migration registry has no transitions. Task 3.8 is next; C3 remains open. See the [migration preparation repair](technical-foundation.md#task-37-migration-preparation-repair-2026-10-26).
+Status: stages 1–3 and C3 are complete. Task 4.1 is complete by explicit user instruction on 2026-10-26, with the remaining UI verification limits recorded in the [theme verification record](technical-foundation.md#task-41-shared-wpf-resources-and-closure-2026-10-26). Task 4.2 is next and requires a separate instruction; C4 remains open. Only v1 is supported; the production migration registry has no transitions.
 
 Revision (2026-10-25, D-21): current requirements use plaintext Markdown and ZIP backups. Stage 1 checkmarks and its completion record are historical; superseded storage/protection choices below are not current requirements. Task 2.1 remains complete. No revised task or checkpoint is completed by this documentation update.
 
@@ -73,7 +73,7 @@ Dependency: C2 and the format specified in 2.2. Coverage: US-01, storage foundat
 
 - [x] **Checkpoint C3:** US-01 and the storage foundations of US-09 are verified; saved state survives restarts and tested write failures, and invalid files are preserved.
 
-Stage 3 completion (2026-10-26, user-authorized): Windows 10.0.26200.0 x64 / NTFS, SDK 10.0.402. Debug/Release builds and all formatting checks passed; each configuration passed 96 prototype scenarios and 263 contract checks. Windows UI creation/cancellation, remembered reopening, missing-path Retry, separate-copy recovery and normal closure passed; original settings were restored byte-for-byte. Insufficient-space failures used injection by user choice. Physical disk exhaustion, power loss and minimum Windows versions remain unverified. See [final verification](technical-foundation.md#task-38-final-verification-2026-10-26). Task 4.1 has not started.
+Stage 3 completion (2026-10-26, user-authorized): Windows 10.0.26200.0 x64 / NTFS, SDK 10.0.402. Debug/Release builds and all formatting checks passed; each configuration passed 96 prototype scenarios and 263 contract checks. Windows UI creation/cancellation, remembered reopening, missing-path Retry, separate-copy recovery and normal closure passed; original settings were restored byte-for-byte. Insufficient-space failures used injection by user choice. Physical disk exhaustion, power loss and minimum Windows versions remain unverified. See [final verification](technical-foundation.md#task-38-final-verification-2026-10-26). Task 4.1 had not started at the time of stage 3 closure.
 
 Task 3.1 verification (2026-10-25, Windows x64): the Debug solution build passed with zero warnings/errors, and all 20 contract checks passed, including nine model checks. Solution and contract-project formatting checks passed outside the sandbox after sandbox MSBuild pipe access failures. See the [model verification record](technical-foundation.md#task-31-models-and-verification). Production storage, tasks 3.2–3.8 and C3 remain open.
 
@@ -85,7 +85,7 @@ Task 3.7 repair verification (2026-10-26, Windows x64 / SDK 10.0.402): Debug sol
 
 Dependency: C3 and decisions about layout and repeated launches. Rules: `design.md`.
 
-- [ ] 4.1. Create shared WPF resources for the palette, typography, dimensions, spacing, and control styles in the concise design system.
+- [x] 4.1. Create shared WPF resources for the palette, typography, dimensions, spacing, and control styles in the concise design system.
 - [ ] 4.2. Build catalog directory selection/creation and reopening flows with local loading indicators and clear errors, using English text.
 - [ ] 4.3. Build the main window: folders, website list, and details, with a multiline Description field, Ctrl+F quick search, and Save / Discard / Cancel prompts for unsaved edits.
 - [ ] 4.4. Prepare shared inputs, buttons, lists, confirmations, and hover/focus/disabled/loading/empty/error states.
@@ -93,6 +93,8 @@ Dependency: C3 and decisions about layout and repeated launches. Rules: `design.
 - [ ] 4.6. Verify keyboard navigation, focus order, long labels, and resizing. Show an honest empty state before entries exist.
 
 - [ ] **Checkpoint C4:** users can select/create a catalog directory and enter the catalog shell; core components and states are consistent.
+
+Task 4.1 closure (2026-10-26, user-authorized): shared theme resources are applied to the existing catalog window. Debug builds, 263 contract checks, formatting, XML/diff checks, contrast checks and native Windows UI checks at 200% passed. Native 100% verification was interrupted; offscreen 100%/150% images were invalid and are not evidence. Recovery content can clip at a window height of 600 DIP. These limitations remain open for the subsequent layout/scaling work; C4 is not closed. See the [verification record](technical-foundation.md#task-41-shared-wpf-resources-and-closure-2026-10-26).
 
 ## 5. Handle unsaved edits and external changes
 

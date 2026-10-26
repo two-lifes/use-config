@@ -7,43 +7,36 @@
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource CanvasBrush}"
         Foreground="{StaticResource PrimaryTextBrush}"
-        FontFamily="Segoe UI" FontSize="14" Loaded="WindowLoaded">
-    <Window.Resources>
-        <Style TargetType="Button">
-            <Setter Property="MinHeight" Value="34" />
-            <Setter Property="Padding" Value="12,4" />
-            <Setter Property="Margin" Value="0,0,8,0" />
-        </Style>
-    </Window.Resources>
-    <StackPanel Margin="24">
-        <TextBlock Text="Use Config" FontSize="24" FontWeight="SemiBold" />
-        <TextBlock Margin="0,12,0,0"
-                   Foreground="{StaticResource SecondaryTextBrush}"
+        FontFamily="{StaticResource BodyFontFamily}" FontSize="{StaticResource BodyFontSize}" Loaded="WindowLoaded">
+    <StackPanel Margin="{StaticResource OuterPadding}">
+        <TextBlock Text="Use Config" Style="{StaticResource HeadingTextStyle}" />
+        <TextBlock Margin="{StaticResource SectionGap}"
+                   Style="{StaticResource SecondaryTextStyle}"
                    Text="Choose an existing Markdown catalog or initialize an empty folder. Invalid files are preserved and reported below."
                    TextWrapping="Wrap" />
-        <TextBlock Margin="0,12,0,0"
-                   Foreground="{StaticResource SecondaryTextBrush}"
+        <TextBlock Margin="{StaticResource SectionGap}"
+                   Style="{StaticResource SecondaryTextStyle}"
                    Text="Markdown files, ZIP backups, and service recovery copies contain plaintext usernames and passwords. Masking passwords in the app does not encrypt these files."
                    TextWrapping="Wrap" />
-        <StackPanel x:Name="Actions" Orientation="Horizontal" Margin="0,20,0,0">
-            <Button Content="Open catalog" Click="OpenCatalog" />
-            <Button Content="Create catalog" Click="CreateCatalog" />
-            <Button x:Name="RetryButton" Content="Retry" Click="RetryCatalog" IsEnabled="False" />
+        <StackPanel x:Name="Actions" Orientation="Horizontal" Margin="{StaticResource AreaGap}">
+            <Button Style="{StaticResource PrimaryButtonStyle}" Margin="{StaticResource ButtonGap}" Content="Open catalog" Click="OpenCatalog" />
+            <Button Margin="{StaticResource ButtonGap}" Content="Create catalog" Click="CreateCatalog" />
+            <Button x:Name="RetryButton" Margin="{StaticResource ButtonGap}" Content="Retry" Click="RetryCatalog" IsEnabled="False" />
         </StackPanel>
-        <StackPanel x:Name="RecoveryActions" Visibility="Collapsed" Margin="0,12,0,0">
+        <StackPanel x:Name="RecoveryActions" Visibility="Collapsed" Margin="{StaticResource SectionGap}">
             <TextBlock Text="An interrupted operation needs recovery. Save the previous version to a separate folder; the current catalog will not be changed." TextWrapping="Wrap" />
-            <ComboBox x:Name="RecoveryOperations" DisplayMemberPath="Label" Margin="0,8,0,8" />
+            <ComboBox x:Name="RecoveryOperations" Style="{StaticResource CatalogComboBoxStyle}" DisplayMemberPath="Label" Margin="{StaticResource FieldGap}" />
             <Button Content="Save recovery copy" Click="SaveRecoveryCopy" HorizontalAlignment="Left" />
         </StackPanel>
-        <TextBlock Text="Catalog path" Margin="0,20,0,6" />
-        <TextBlock x:Name="CatalogPath" Text="No catalog selected." TextWrapping="Wrap" />
-        <TextBlock x:Name="Status" Margin="0,12,0,0" TextWrapping="Wrap"
-                   Foreground="{StaticResource SecondaryTextBrush}"
+        <TextBlock Text="Catalog path" Margin="{StaticResource LabelGap}" />
+        <TextBlock x:Name="CatalogPath" Style="{StaticResource TechnicalTextStyle}" Text="No catalog selected." TextWrapping="Wrap" />
+        <TextBlock x:Name="Status" Margin="{StaticResource SectionGap}" TextWrapping="Wrap"
+                   Style="{StaticResource SecondaryTextStyle}"
                    AutomationProperties.LiveSetting="Polite" />
-        <ScrollViewer MaxHeight="140" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
+        <ScrollViewer MaxHeight="{StaticResource DiagnosticsMaxHeight}" VerticalScrollBarVisibility="Auto" Margin="{StaticResource SectionGap}">
             <ItemsControl x:Name="CatalogErrors" />
         </ScrollViewer>
-        <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
+        <ScrollViewer MaxHeight="{StaticResource RecordsMaxHeight}" VerticalScrollBarVisibility="Auto" Margin="{StaticResource SectionGap}">
             <ItemsControl x:Name="CatalogRecords" />
         </ScrollViewer>
     </StackPanel>

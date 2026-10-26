@@ -1,5 +1,21 @@
 # Technical foundation contracts
 
+## Task 4.1 shared WPF resources and closure (2026-10-26)
+
+[Theme.xaml](../src/UseConfig.App/Resources/Theme.xaml) centralizes the design palette, Segoe UI/Consolas typography, dimensions, spacing, radii, text styles, primary/secondary/ghost buttons, the non-editable recovery ComboBox and scrollbar styles. [App.xaml](../src/UseConfig.App/App.xaml) merges the dictionary; [MainWindow.xaml](../src/UseConfig.App/MainWindow.xaml) uses these resources without changing catalog handlers or contracts. Hover, pressed, keyboard focus and disabled states are static; no dependencies or animations were added. The scrollbar intersection uses a scoped system-brush override to avoid a light corner.
+
+Verification on Windows x64 with SDK 10.0.402:
+
+- Debug builds of the solution and contract-check project passed without warnings or errors; all 263 contract checks passed.
+- Solution formatting verification passed outside the sandbox. The initial sandbox build failed without a diagnostic; the outside-sandbox build passed. XML parsing, whitespace and diff checks passed.
+- A temporary host under ignored `bin/` loaded the compiled App.xaml, all 105 theme resources and the actual MainWindow with an isolated synthetic catalog session. User settings and catalog data were not used or changed; no test infrastructure was added to tracked files.
+- Native WPF checks at the existing 200% system scale covered opening a synthetic catalog, cancellation preserving selection, Retry after a missing directory became available, Tab/Shift+Tab focus, button states, ComboBox mouse/keyboard selection and Escape, recovery-mode selection, both scrollbar orientations and normal closure of the exercised catalog/recovery windows. Synthetic state-gallery controls also exercised pressed/disabled variants.
+- Checked text contrast ratios were at least 7.51:1; the interactive border against hover background was 4.15:1 and keyboard focus was 14.85:1.
+
+Limits: two offscreen 100%/150% rendering approaches produced cropped or distorted images and are not accepted as verification. The user authorized a temporary native 100% check, then stopped Computer Use with Escape before the scale was changed; Windows remained at 200% and the final synthetic gallery remained open. Native 100%, the complete supported-Windows/display matrix and Release were not checked for this task. In recovery mode, lower content clips at a window height of 600 DIP; layout and resizing work remains in tasks 4.2–4.6.
+
+After receiving these limits, the user explicitly instructed marking 4.1 complete, committing and pushing on 2026-10-26. This records user-authorized closure of the resource foundation, not successful completion of the outstanding checks. C4 remains open; task 4.2 requires a separate instruction.
+
 ## Task 3.8 implementation and interrupted verification (2026-10-26)
 
 At the start of this attempt, task 3.8 and C3 remained open. The user authorized the plan, removed verification duration/count limits (D-25), and selected injected insufficient-space failures rather than a full test volume. The interrupted-attempt record is preserved below; final verification and subsequent closure supersede its pending status.
