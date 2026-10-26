@@ -18,6 +18,13 @@ public sealed class CatalogSession(ICatalogLocation location, ICatalogSettings s
     public string? RememberedPath { get; private set; }
     public ErrorCode? PersistenceError { get; private set; }
 
+    public bool Replace(OpenedCatalog expected, OpenedCatalog updated)
+    {
+        if (!ReferenceEquals(Current, expected) || expected.RootPath != updated.RootPath) return false;
+        Current = updated;
+        return true;
+    }
+
     public async Task<OperationResult<Completion>> RestoreAsync(CancellationToken cancellationToken)
     {
         var read = await settings.ReadAsync(cancellationToken);

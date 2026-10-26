@@ -52,7 +52,7 @@ public sealed class MarkdownCatalogLocation(string settingsDirectory, MarkdownCa
                     return Fail(preparationFailure.Code);
             }
             var loaded = new MarkdownCatalogValidator().Load(root, snapshot.Documents, snapshot.Diagnostics);
-            return new OperationResult<OpenedCatalog>.Success(new OpenedCatalog(root, loaded.Folders, loaded.Entries, loaded.Diagnostics.Distinct()));
+            return new OperationResult<OpenedCatalog>.Success(new OpenedCatalog(root, loaded.Folders, loaded.Entries, loaded.Diagnostics.Distinct(), snapshot));
         }
         catch (DecoderFallbackException) { return Fail(ErrorCode.MalformedContent); }
         catch (Exception exception) when (LocationPaths.Classify(exception) is not null)

@@ -1,10 +1,13 @@
 <Window x:Class="UseConfig.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:UseConfig.App"
         Title="Use Config" Width="960" Height="600" MinWidth="480" MinHeight="320"
-        WindowStartupLocation="CenterScreen" Loaded="WindowLoaded"
+        WindowStartupLocation="CenterScreen" Loaded="WindowLoaded" Closing="WindowClosing" SizeChanged="WindowSizeChanged"
         Background="{StaticResource CanvasBrush}" Foreground="{StaticResource PrimaryTextBrush}"
         FontFamily="{StaticResource BodyFontFamily}" FontSize="{StaticResource BodyFontSize}">
+    <Window.InputBindings><KeyBinding Key="F" Modifiers="Control" Command="ApplicationCommands.Find" /></Window.InputBindings>
+    <Window.CommandBindings><CommandBinding Command="ApplicationCommands.Find" Executed="FindExecuted" CanExecute="FindCanExecute" /></Window.CommandBindings>
     <Grid Margin="{StaticResource OuterPadding}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -56,11 +59,7 @@
                         <Button Content="Save recovery copy" Click="SaveRecoveryCopy" HorizontalAlignment="Left" />
                     </StackPanel>
                     <TextBlock x:Name="EmptyState" Text="This catalog has no websites yet." TextWrapping="Wrap" Margin="{StaticResource SectionGap}" Visibility="Collapsed" />
-                    <ItemsControl x:Name="CatalogRecords" Margin="{StaticResource SectionGap}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" /></DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <local:CatalogPane x:Name="BrowserPane" Height="420" Margin="{StaticResource SectionGap}" />
                 </StackPanel>
                 <Button x:Name="RetryButton" Content="Retry" Click="RetryCatalog" HorizontalAlignment="Left" Margin="{StaticResource SectionGap}" />
             </StackPanel>

@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../../src/UseConfig.App/CatalogFlow.cs" Link="CatalogFlow.cs" />
+    <Compile Include="../../src/UseConfig.App/CatalogShell.cs" Link="CatalogShell.cs" />
     <ProjectReference Include="../../src/UseConfig.Catalog/UseConfig.Catalog.csproj" />
     <ProjectReference Include="../../src/UseConfig.Storage/UseConfig.Storage.csproj" />
   </ItemGroup>

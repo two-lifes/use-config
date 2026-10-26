@@ -87,7 +87,7 @@ Dependency: C3 and decisions about layout and repeated launches. Rules: `design.
 
 - [x] 4.1. Create shared WPF resources for the palette, typography, dimensions, spacing, and control styles in the concise design system.
 - [x] 4.2. Build catalog directory selection/creation and reopening flows with local loading indicators and clear errors, using English text.
-- [ ] 4.3. Build the main window: folders, website list, and details, with a multiline Description field, Ctrl+F quick search, and Save / Discard / Cancel prompts for unsaved edits.
+- [x] 4.3. Build the main window: folders, website list, and details, with a multiline Description field, Ctrl+F quick search, and Save / Discard / Cancel prompts for unsaved edits.
 - [ ] 4.4. Prepare shared inputs, buttons, lists, confirmations, and hover/focus/disabled/loading/empty/error states.
 - [ ] 4.5. Implement agreed repeated-launch behavior without allowing inconsistent writes to the same catalog.
 - [ ] 4.6. Verify keyboard navigation, focus order, long labels, and resizing. Show an honest empty state before entries exist.
@@ -95,6 +95,8 @@ Dependency: C3 and decisions about layout and repeated launches. Rules: `design.
 - [ ] **Checkpoint C4:** users can select/create a catalog directory and enter the catalog shell; core components and states are consistent.
 
 Task 4.1 closure (2026-10-26, user-authorized): shared theme resources are applied to the existing catalog window. Debug builds, 263 contract checks, formatting, XML/diff checks, contrast checks and native Windows UI checks at 200% passed. Native 100% verification was interrupted; offscreen 100%/150% images were invalid and are not evidence. Recovery content can clip at a window height of 600 DIP. These limitations remain open for the subsequent layout/scaling work; C4 is not closed. See the [verification record](technical-foundation.md#task-41-shared-wpf-resources-and-closure-2026-10-26).
+
+Task 4.3 implementation (2026-10-26): the user approved the working minimum in D-26. Three panes, quick search and safe Description-only editing are implemented; Debug builds, 330 contract checks and native Windows checks passed, with user-assisted Escape verification. See the [verification record](technical-foundation.md#task-43-catalog-shell-and-description-editing-2026-10-26) for exact coverage and limits. Task 4.3 was marked complete with explicit user approval on 2026-10-26; C4 and stages 5–7 remain open.
 
 ## 5. Handle unsaved edits and external changes
 

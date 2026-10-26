@@ -112,6 +112,7 @@ try
         "document default string representation omits contents");
     await LocationChecks.RunAsync(Check);
     await CatalogFlowChecks.RunAsync(Check);
+    await CatalogShellChecks.RunAsync(Check);
     MarkdownCodecChecks.Run((name, action) => { action(); Check(true, name); });
     await CatalogLoadingChecks.RunAsync(Check);
     if (OperatingSystem.IsWindows())

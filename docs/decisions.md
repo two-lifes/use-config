@@ -77,6 +77,10 @@ The user explicitly removed the five-minute total-duration and ten-command verif
 
 For task 3.8, the user selected deterministic fault injection for insufficient-space scenarios rather than a full test volume. Real disk exhaustion remains unverified. Actual child-process termination and synthetic Windows ACL checks remain in scope. The initial implementation instruction did not authorize completion marks, commits or pushes. After successful final verification, the user separately approved closing 3.8/C3, updating documentation, committing and pushing to origin/work on 2026-10-26. Stage 4 remains unauthorized.
 
+### D-26 — Task 4.3 working minimum (confirmed, 2026-10-26)
+
+The user selected and explicitly authorized the 4.3 implementation plan: a three-pane catalog window, working search over the approved fields, and editing only Description with safe persistence and Save / Discard / Cancel. Necessary portions of stages 5–7 may be integrated for these behaviors; this does not authorize all later-stage work or close those tasks. Other entry fields remain read-only, passwords remain masked, and creation/deletion/moving, general editing, browser launching and clipboard actions remain future work. Verification uses synthetic catalogs and isolated settings without changing the system display scale. Completion marks, commit and push are to be offered after verification, not performed automatically. See the [implementation and verification record](technical-foundation.md#task-43-catalog-shell-and-description-editing-2026-10-26).
+
 ## Former proposals — resolved in stage 1
 
 These IDs are retained for existing references and decision history. They record the approved stage 1 choices, not claims of implementation or testing. P-01, P-04, and P-06 are partially superseded by D-21; their historical wording below is retained for traceability.
